@@ -1,9 +1,11 @@
 package be.uantwerpen.clubiot.Controller;
 
+import be.uantwerpen.clubiot.Model.Music;
 import be.uantwerpen.clubiot.Service.BrokerService;
-import be.uantwerpen.clubiot.Service.RMIService;
+import be.uantwerpen.clubiot.Service.DatabaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 @Controller // spring --> controller class --> autowired objecten
@@ -11,17 +13,18 @@ public class DjController {
     @Autowired
     private BrokerService brokerService;
     @Autowired
-    private RMIService rmiService;
+    private DatabaseService databaseService;
 
     @RequestMapping({"/","/djpage"})
-    @ResponseBody
     public String showHomepage(){ return "dj"; }
 
     @RequestMapping(value="/api/search", method= RequestMethod.GET)
-    public String searchSong(@RequestParam("song") String song)
+    public String searchSong(@RequestParam(value = "song", required = false) String song, ModelMap model)
     {
-        //rmiService.findSong(song);
-        return song;
+        //song = rmiService.findSong(song);
+        Music music = new Music(song, "Ruben", 1982);
+        model.addAttribute("song", music);
+        return "dj";
     }
 
     @RequestMapping(value="/api/play/{id}", method= RequestMethod.POST)
