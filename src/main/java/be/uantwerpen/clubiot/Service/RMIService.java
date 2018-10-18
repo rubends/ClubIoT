@@ -12,7 +12,7 @@ public class RMIService {
     private String serverIp = "127.0.0.1";
 
     public RMIService(){
-        if (System.getSecurityManager() == null) {
+        /*if (System.getSecurityManager() == null) {
             System.setProperty("java.security.policy","file:src/client.policy");
             System.setSecurityManager(new SecurityManager());
         }
@@ -22,7 +22,7 @@ public class RMIService {
             music = (Music) registry.lookup(name);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     public String findSong(String song){

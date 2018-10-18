@@ -20,14 +20,14 @@ public class DjController {
     @RequestMapping(value="/api/search", method= RequestMethod.GET)
     public String searchSong(@RequestParam("song") String song)
     {
-        rmiService.findSong(song);
+        //rmiService.findSong(song);
         return song;
     }
 
     @RequestMapping(value="/api/play/{id}", method= RequestMethod.POST)
     public int playSong(@PathVariable int id)
     {
-        brokerService.playSong(id);
+        //brokerService.playSong(id);
         return id;
     }
 
