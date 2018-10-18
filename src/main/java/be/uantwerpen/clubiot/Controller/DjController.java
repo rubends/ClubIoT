@@ -13,9 +13,9 @@ public class DjController {
     @Autowired
     private RMIService rmiService;
 
-    @RequestMapping({"/","/dj"})
+    @RequestMapping({"/","/djpage"})
     @ResponseBody
-    public String showHomepage(){ return "Hello World"; }
+    public String showHomepage(){ return "dj"; }
 
     @RequestMapping(value="/api/search", method= RequestMethod.GET)
     public String searchSong(@RequestParam("song") String song)
