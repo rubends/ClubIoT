@@ -7,9 +7,8 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller // spring --> controller class --> autowired objecten
 public class DjController {
-    @RequestMapping({"/","/dj"})
-    @ResponseBody
-    public String showHomepage(){ return "Hello World"; }
+    @RequestMapping({"/","/djhomepage"})
+    public String showHomepage(){ return "dj"; }
 
     @RequestMapping(value="/api/search", method= RequestMethod.GET)
     public String searchSong(@RequestParam("song") String song)
