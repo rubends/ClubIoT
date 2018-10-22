@@ -1,16 +1,33 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en"></head>
 <body>
- <div id="stats1"> <!-- Thymeleaf -->
-     <span th:text="#{dashboard.mostliked} + ' ' + ${mostliked}"></span><br/>
-     <span th:text="#{dashboard.mostdisliked} + ' ' + ${mostdisliked}"></span><br/>
- </div>
- <div id="stats2"> <!-- AJAX -->
+<h1>Hello Dashboard</h1>
+<p>Most Liked: <span th:text="${votes.mostLiked}"/></p>
+<p>Most Disliked: <span th:text="${votes.mostDisliked}"/></p>
+<p>Best Voter: <span th:text="${votes.bestVoter}"/></p>
 
- </div>
+
+<!--&lt;!&ndash;<span th:text="#{dashboard.mostliked} + ' ' + ${mostliked}"></span><br/>&ndash;&gt;-->
+<!--&lt;!&ndash;<span th:text="#{dashboard.mostdisliked} + ' ' + ${mostdisliked}"></span><br/>&ndash;&gt;-->
 </body>
 </html>
+
+
+
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">-->
+<!--<head>-->
+    <!--<meta charset="UTF-8">-->
+    <!--<title>Dashboard</title>-->
+<!--</head>-->
+<!--<body>-->
+ <!--<div id="stats1"> &lt;!&ndash; Thymeleaf &ndash;&gt;-->
+     <!--&lt;!&ndash;<span th:text="#{dashboard.mostliked} + ' ' + ${mostliked}"></span><br/>&ndash;&gt;-->
+     <!--&lt;!&ndash;<span th:text="#{dashboard.mostdisliked} + ' ' + ${mostdisliked}"></span><br/>&ndash;&gt;-->
+ <!--</div>-->
+ <!--<div id="stats2"> &lt;!&ndash; AJAX &ndash;&gt;-->
+
+ <!--</div>-->
+<!--</body>-->
+<!--</html>-->
