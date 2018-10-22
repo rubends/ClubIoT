@@ -3,9 +3,86 @@
 <head>
     <title>DJ page</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script>
+        function search() {
+            //this method gets called when user enters search
+            const song = document.getElementById("song");
+            const artist = document.getElementById("artist");
+            const year = document.getElementById("year");
+
+            //TODO send query to database
+            //TODO for each entery append list
+            deleteList();
+            fillList(song,artist,year);
+        }
+        function deleteList(){
+            //this method deletes all entries from table
+            const table = document.getElementById("table");
+            for(let i = table.rows.length - 1; i > 1; i--)
+            {
+                table.deleteRow(i);
+            }
+        }
+        function fillList(song,artist,year){
+            //this method adds entries to table
+            //testdata
+            //TODO remove testdata
+            const array = [["A1", "B1", "C1"],
+                ["A2", "B2", "C2"],
+                ["A3", "B3", "C3"],
+                ["A4", "B4", "C4"],
+                ["A5", "B5", "C5"],
+                ["A1", "B1", "C1"],
+                ["A2", "B2", "C2"],
+                ["A3", "B3", "C3"],
+                ["A4", "B4", "C4"],
+                ["A5", "B5", "C5"]];
+
+            const table = document.getElementById("table");
+
+            for(let i = 0; i < array.length; i++)
+            {
+                // create a new row
+                let newRow = table.insertRow(table.length);
+                for(let j = 0; j < array[i].length; j++)
+                {
+                    // create a new cell
+                    let cell = newRow.insertCell(j);
+
+                    // add value to the cell
+                    cell.innerHTML = array[i][j];
+                }
+            }
+        }
+
+    </script>
 </head>
 <body>
-Hello world!
-I am using Thymeleaf for the DJ dashboard!
+<table id="table">
+    <div class="songList">
+    <tr>
+        <th>Song</th>
+        <th>Artist</th>
+        <th>Releas date</th>
+    </tr>
+    <tr class="search">
+        <td><input type="text" placeholder="Song" id="song" onchange="search()"></td>
+        <td><input type="text" placeholder="Artist" id="artist" onchange="search()"></td>
+        <td><input type="number" placeholder="Year" id="ÿear" onchange="search()"></td>
+    </tr>
+    <tr>
+        <td>Alles moet op</td>
+        <td>lamme frans</td>
+        <td>2018</td>
+    </tr>
+    <tr>
+        <td>blabla</td>
+        <td>blalba</td>
+        <td>2017</td>
+    </tr>
+    </div>
+
+</table>
 </body>
 </html>
