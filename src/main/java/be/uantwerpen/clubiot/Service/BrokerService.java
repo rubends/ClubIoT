@@ -1,5 +1,6 @@
 package be.uantwerpen.clubiot.Service;
 
+import be.uantwerpen.clubiot.Model.Music;
 import org.eclipse.paho.client.mqttv3.*;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
@@ -103,7 +104,7 @@ public class BrokerService implements MqttCallback {
         }
     }
 
-    public void playSong(int id){
+    public void playSong(Music song){
 
     }
 
