@@ -17,20 +17,17 @@ public class DjController {
 
     @RequestMapping(value={"/","/djpage"}, method= RequestMethod.GET)
     public String getDJpage(ModelMap model){
-        //data base get all songs
-        Music[] music = new Music[2];
-        music[1] = new Music("Never gonna give Spring up", "Rick Spastley", 1980);
-        music[2] = new Music("Spring is in the air", "Urbanus", 1996);
+        Iterable<Music> music = databaseService.findAll();
         model.addAttribute("music", music);
         return "dj";
     }
 
     @RequestMapping(value="/api/search", method= RequestMethod.GET)
-    public String searchSong(@RequestParam(value = "song", required = false) String search, ModelMap model)
+    public void searchSong(@RequestParam(value = "song", required = false) String search, ModelMap model)
     {
-        Music song = new Music(databaseService.findSong(search), "Britney Spears", 1982);
-        model.addAttribute("song", song);
-        return "dj";
+        Iterable<Music> songs = databaseService.findSong(search);
+        model.addAttribute("songs", songs);
+        //return "dj";
     }
 
     @RequestMapping(value="/api/play/{id}", method= RequestMethod.POST)
