@@ -1,6 +1,11 @@
 package be.uantwerpen.clubiot.Model;
 
-public class Music {
+import org.springframework.data.jpa.domain.AbstractPersistable;
+
+import javax.persistence.Entity;
+
+@Entity
+public class Music extends AbstractPersistable<Long> {
     private String title;
     private String artist;
     private int year;
