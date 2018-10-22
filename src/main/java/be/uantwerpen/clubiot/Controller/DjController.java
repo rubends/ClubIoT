@@ -15,23 +15,28 @@ public class DjController {
     @Autowired
     private DatabaseService databaseService;
 
-    @RequestMapping({"/","/djpage"})
-    public String showHomepage(){ return "dj"; }
+    @RequestMapping(value={"/","/djpage"}, method= RequestMethod.GET)
+    public String getDJpage(ModelMap model){
+        //data base get all songs
+        Music[] music = new Music[2];
+        music[1] = new Music("Never gonna give Spring up", "Rick Spastley", 1980);
+        music[2] = new Music("Spring is in the air", "Urbanus", 1996);
+        model.addAttribute("music", music);
+        return "dj";
+    }
 
     @RequestMapping(value="/api/search", method= RequestMethod.GET)
-    public String searchSong(@RequestParam(value = "song", required = false) String song, ModelMap model)
+    public String searchSong(@RequestParam(value = "song", required = false) String search, ModelMap model)
     {
-        //song = rmiService.findSong(song);
-        Music music = new Music(song, "Ruben", 1982);
-        model.addAttribute("song", music);
+        Music song = new Music(databaseService.findSong(search), "Britney Spears", 1982);
+        model.addAttribute("song", song);
         return "dj";
     }
 
     @RequestMapping(value="/api/play/{id}", method= RequestMethod.POST)
-    public int playSong(@PathVariable int id)
+    public void playSong(@PathVariable int id)
     {
         //brokerService.playSong(id);
-        return id;
     }
 
 }
