@@ -32,6 +32,7 @@ public class HadoopService {
 
     private void startHadoopCalculation(String name) {
         String uri = "http://" + serverIp + ":" + serverPort + "/" + name;
+        System.out.println("Requesting Hadoop start via "+uri);
 
         RestTemplate restTemplate = restTemplate();
         ResponseEntity<String> response
