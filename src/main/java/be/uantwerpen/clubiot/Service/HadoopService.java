@@ -1,5 +1,6 @@
 package be.uantwerpen.clubiot.Service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
@@ -10,8 +11,12 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class HadoopService {
 
-    private String serverIp = "143.129.39.127";
-    private int serverPort = 80;
+    @Value("${hadoop.host}")
+    private String serverIp;
+
+    @Value("${hadoop.port}")
+    private int serverPort;
+
 
     public void startAll() {
         Thread votes = new Thread(this::startCountVotes);
