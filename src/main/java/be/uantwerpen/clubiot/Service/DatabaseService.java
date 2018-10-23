@@ -14,7 +14,11 @@ public class DatabaseService {
         return this.musicRepository.findAll();
     }
 
-    public Iterable<Music> findSong(String song){
-        return this.musicRepository.findByTitleContainingOrArtistContaining(song);
+    public Iterable<Music> findSongByText(String song){
+        return this.musicRepository.findByTitleContaining(song);
+    }
+
+    public Music findSongById(int id){
+        return this.musicRepository.findOne(id);
     }
 }
