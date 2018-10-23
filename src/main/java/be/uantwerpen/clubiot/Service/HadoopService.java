@@ -1,7 +1,5 @@
 package be.uantwerpen.clubiot.Service;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
@@ -15,20 +13,38 @@ public class HadoopService {
     private String serverIp = "143.129.39.127";
     private int serverPort = 80;
 
-    public void startHadoop() {
-       String uri = "http://" + serverIp + ":" + serverPort + "/statistics";
+    public void startAll() {
+        Thread votes = new Thread(this::startCountVotes);
+        votes.start();
+
+        try {
+            //wait for all threads to finish
+            votes.join();
+        }
+        catch (InterruptedException e) {
+            System.err.println("Thread join was interrupted");
+        }
+    }
+
+    public void startCountVotes() {
+        startHadoopCalculation("countVotes");
+    }
+
+    private void startHadoopCalculation(String name) {
+        String uri = "http://" + serverIp + ":" + serverPort + "/" + name;
 
         RestTemplate restTemplate = restTemplate();
         ResponseEntity<String> response
                 = restTemplate.getForEntity(uri, String.class);
 
-        assert(response.getStatusCode() == HttpStatus.OK);
+        // will wait here for Hadoop response
 
-        if(response.getBody().equals("OK")) return;
-        else throw new IllegalStateException("Hadoop returned an invalid response: "+response.getBody());
+        if(response.getStatusCode() != HttpStatus.OK) {
+            throw new IllegalStateException("Hadoop returned an error code: "+response.getStatusCode());
+        }
     }
 
-    public RestTemplate restTemplate() {
+    private RestTemplate restTemplate() {
         return new RestTemplate(clientHttpRequestFactory());
     }
 
