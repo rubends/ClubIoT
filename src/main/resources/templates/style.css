@@ -1,6 +1,6 @@
 html *
 {
-    font-size: 1em !important;
+    font-size: 1.05em !important;
 }
 
 .songList{
@@ -26,6 +26,7 @@ td {
 }
 body{
     background-color: #2A2E37;
-    color:  #EE7B01;
+    /*color:  #EE7B01;*/
+    color:  #ffffff;
     font-size: large;
 }

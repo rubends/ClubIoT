@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" href="style.css">
     <script>
         function search() {
-            //this method gets called when user enters search
+            //This method gets called when user enters search
             const song = document.getElementById("song");
             const artist = document.getElementById("artist");
             const year = document.getElementById("year");
@@ -17,7 +17,7 @@
             fillList(song,artist,year);
         }
         function deleteList(){
-            //this method deletes all entries from table
+            //This method deletes all entries from table
             const table = document.getElementById("table");
             for(let i = table.rows.length - 1; i > 1; i--)
             {
@@ -25,7 +25,7 @@
             }
         }
         function fillList(song,artist,year){
-            //this method adds entries to table
+            //This method adds entries to table
             //testdata
             //TODO remove testdata
             const array = [["A1", "B1", "C1"],
@@ -39,15 +39,20 @@
                 ["A4", "B4", "C4"],
                 ["A5", "B5", "C5"]];
 
+            if(document.getElementById("song").value === "C") // TODO is a test can be removed
+            {
+                array[0][1] = "Call Out My Name";
+            }
+
             const table = document.getElementById("table");
 
             for(let i = 0; i < array.length; i++)
             {
-                // create a new row
+                // Create a new row
                 let newRow = table.insertRow(table.length);
                 for(let j = 0; j < array[i].length; j++)
                 {
-                    // create a new cell
+                    // Create a new cell
                     let cell = newRow.insertCell(j);
 
                     // add value to the cell
@@ -59,17 +64,17 @@
     </script>
 </head>
 <body>
-<table id="table">
+<table id="table" style="cursor: pointer;">
     <div class="songList">
     <tr>
         <th>Song</th>
         <th>Artist</th>
-        <th>Releas date</th>
+        <th>Release date</th>
     </tr>
     <tr class="search">
         <td><input type="text" placeholder="Song" id="song" onchange="search()"></td>
         <td><input type="text" placeholder="Artist name" id="artist" onchange="search()"></td>
-        <td><input type="number" placeholder="Year" id="ÿear" onchange="search()"></td>
+        <td><input type="number" placeholder="Year" id="year" onchange="search()"></td>
     </tr>
     <tr>
         <td>Alles moet op</td>
@@ -82,6 +87,29 @@
         <td>2017</td>
     </tr>
     </div>
+
+    <audio controls>
+        <source src="horse.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        //This script gets the name of the song we pressed on
+        var table = document.getElementById("table");
+        if (table != null) {
+            for (var i = 2; i < table.rows.length; i++) {
+                for (var j = 0; j < table.rows[i].cells.length; j++)
+                    table.rows[i].cells[j].onclick = function () {
+                        tableText(this);
+                    };
+            }
+        }
+
+        //TODO Can be removed
+        function tableText(tableCell) {
+            alert(tableCell.innerHTML);
+        }
+    </script>
 
 </table>
 </body>
