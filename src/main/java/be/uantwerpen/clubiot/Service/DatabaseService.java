@@ -10,6 +10,12 @@ public class DatabaseService {
     @Autowired
     private MusicRepository musicRepository;
 
+    //TODO This is only for testing
+    public void addSongToRepo(String title, String artist, int year)
+    {
+        musicRepository.save(new Music(title,artist,year));
+    }
+
     public Iterable<Music> findAll() {
         return this.musicRepository.findAll();
     }

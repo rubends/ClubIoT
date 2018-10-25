@@ -18,6 +18,8 @@ public class DjController {
     @RequestMapping(value={"/","/djpage"}, method= RequestMethod.GET)
     public String getDJpage(ModelMap model){
         Iterable<Music> music = databaseService.findAll();
+
+        databaseService.addSongToRepo("Hello", "Artist", 2018); //TODO Remove this
         model.addAttribute("music", music);
         return "dj";
     }

@@ -3,9 +3,114 @@
 <head>
     <title>DJ page</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script>
+        function search() {
+            //This method gets called when user enters search
+            const song = document.getElementById("song");
+            const artist = document.getElementById("artist");
+            const year = document.getElementById("year");
+
+            //TODO send query to database
+            //TODO for each entery append list
+            deleteList();
+            fillList(song,artist,year);
+        }
+        function deleteList(){
+            //This method deletes all entries from table
+            const table = document.getElementById("table");
+            for(let i = table.rows.length - 1; i > 1; i--)
+            {
+                table.deleteRow(i);
+            }
+        }
+        function fillList(song,artist,year){
+            //This method adds entries to table
+            //testdata
+            //TODO remove testdata
+            const array = [["A1", "B1", "C1"],
+                ["A2", "B2", "C2"],
+                ["A3", "B3", "C3"],
+                ["A4", "B4", "C4"],
+                ["A5", "B5", "C5"],
+                ["A1", "B1", "C1"],
+                ["A2", "B2", "C2"],
+                ["A3", "B3", "C3"],
+                ["A4", "B4", "C4"],
+                ["A5", "B5", "C5"]];
+
+            if(document.getElementById("song").value === "C") // TODO is a test can be removed
+            {
+                array[0][1] = "Call Out My Name";
+            }
+
+            const table = document.getElementById("table");
+
+            for(let i = 0; i < array.length; i++)
+            {
+                // Create a new row
+                let newRow = table.insertRow(table.length);
+                for(let j = 0; j < array[i].length; j++)
+                {
+                    // Create a new cell
+                    let cell = newRow.insertCell(j);
+
+                    // add value to the cell
+                    cell.innerHTML = array[i][j];
+                }
+            }
+        }
+
+    </script>
 </head>
 <body>
-Hello world!
-I am using Thymeleaf for the DJ dashboard!
+<table id="table" style="cursor: pointer;">
+    <div class="songList">
+    <tr>
+        <th>Song</th>
+        <th>Artist</th>
+        <th>Release date</th>
+    </tr>
+    <tr class="search">
+        <td><input type="text" placeholder="Song" id="song" onchange="search()"></td>
+        <td><input type="text" placeholder="Artist name" id="artist" onchange="search()"></td>
+        <td><input type="number" placeholder="Year" id="year" onchange="search()"></td>
+    </tr>
+    <tr>
+        <td>Alles moet op</td>
+        <td>lamme frans</td>
+        <td>2018</td>
+    </tr>
+    <tr>
+        <td  th:text="${music.title}" />
+        <td  th:text="${music.artist}" />
+        <td  th:text="${music.year}" />
+    </tr>
+    </div>
+
+    <audio controls>
+        <source src="horse.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        //This script gets the name of the song we pressed on
+        var table = document.getElementById("table");
+        if (table != null) {
+            for (var i = 2; i < table.rows.length; i++) {
+                for (var j = 0; j < table.rows[i].cells.length; j++)
+                    table.rows[i].cells[j].onclick = function () {
+                        tableText(this);
+                    };
+            }
+        }
+
+        //TODO Can be removed
+        function tableText(tableCell) {
+            alert(tableCell.innerHTML);
+        }
+    </script>
+
+</table>
 </body>
 </html>
