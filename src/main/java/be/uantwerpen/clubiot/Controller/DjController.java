@@ -34,9 +34,11 @@ public class DjController {
     @ResponseBody
     public void playSong(@PathVariable int id)
     {
+        //new connection, otherwise no idea when to disconnect
         brokerService.connect("tcp://143.129.39.126:1883", "dj_web", "a134bie5"); // open connection: "tcp://iot.eclipse.org:1883"
         brokerService.subscribe("music", 2);
         Music song = databaseService.findSongById(id);
         brokerService.playSong("music", song);
+        brokerService.disconnect();
     }
 }

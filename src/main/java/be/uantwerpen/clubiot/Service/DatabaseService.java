@@ -15,7 +15,7 @@ public class DatabaseService {
     }
 
     public Iterable<Music> findSongByText(String song){
-        return this.musicRepository.findByTitleContaining(song);
+        return this.musicRepository.findAllByTitleContainingOrArtistContainingAllIgnoreCase(song, song);
     }
 
     public Music findSongById(int id){

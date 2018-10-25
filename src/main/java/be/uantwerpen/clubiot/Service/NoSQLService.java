@@ -1,7 +1,7 @@
 package be.uantwerpen.clubiot.Service;
 
 import be.uantwerpen.clubiot.Model.SongResult;
-import be.uantwerpen.clubiot.Model.VotesDummy;
+import be.uantwerpen.clubiot.Model.Stats;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
@@ -28,9 +28,9 @@ public class NoSQLService
         hadoopService.startAll();
     }
 
-    public VotesDummy getResults()
+    public Stats getResults()
     {
-        VotesDummy dummy = new VotesDummy();
+        Stats dummy = new Stats();
 
         DB database = this.mongo.getDb();
         DBCollection voteCache = database.getCollection("vote_cache");
@@ -40,7 +40,7 @@ public class NoSQLService
         {
             DBObject object =  voteCacheIt.next();
 
-            dummy = new VotesDummy(object.toString(), "mostDisliked", "bestVoter", "welcome");
+            dummy = new Stats(object.toString(), "mostDisliked", "bestVoter", "welcome");
         }
 
 
