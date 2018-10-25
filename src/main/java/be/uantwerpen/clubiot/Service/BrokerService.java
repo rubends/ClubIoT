@@ -2,6 +2,7 @@ package be.uantwerpen.clubiot.Service;
 
 import be.uantwerpen.clubiot.Model.Music;
 import org.eclipse.paho.client.mqttv3.*;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -12,24 +13,15 @@ import java.util.UUID;
 public class BrokerService implements MqttCallback {
 
     private IMqttClient client;
-    String serverUri ;
-    String topic;
 
-
-    public BrokerService(){
-        this.connect("tcp://143.129.39.126:1883", "dj_web", "a134bie5"); // open connection: "tcp://iot.eclipse.org:1883"
-        topic = "music";
-        this.subscribe(topic);
-        System.out.println("Brokerservice Contructor");
-    }
+    public BrokerService(){ }
 
     public int connect(String serverUri, String user, String password) {
         System.out.println("connecting...");
-        this.serverUri = serverUri;
         String publisherId = UUID.randomUUID().toString();
         try{
 
-            client = new MqttClient(serverUri, publisherId);
+            client = new MqttClient(serverUri,publisherId, new MemoryPersistence()); //MemoryPersistence --> MqttDefaultFilePersistence creates files
 
             MqttConnectOptions options = new MqttConnectOptions();
             options.setAutomaticReconnect(true);
@@ -57,10 +49,10 @@ public class BrokerService implements MqttCallback {
     }
 
 
-    public void subscribe(String topic){
+    public void subscribe(String topic, int qos){
         if(isConnected()){
             try {
-                client.subscribe(topic);
+                client.subscribe(topic, qos);
                 System.out.println("Subscribed to '" + topic + "'");
             }
             catch(MqttException e){
@@ -69,18 +61,17 @@ public class BrokerService implements MqttCallback {
         }
     }
 
-//    public void publishTest(){
-//        if(isConnected()){
-//            MqttMessage msg = new MqttMessage();
-//            msg.setPayload("Hello Mqtt".getBytes());
-//            try {
-//                client.publish("TopicTest", msg);
-//            }
-//            catch(MqttException e){
-//                System.out.println("Publishing failed");
-//            }
-//        }
-//    }
+    public void disconnect(){
+        if(isConnected()){
+            try {
+                client.disconnect();
+                System.out.println("Disconnected");
+            }
+            catch(MqttException e){
+                System.out.println("Disconnection failed");
+            }
+        }
+    }
 
     public void publishString(String topic, String message){
         if(isConnected()){
@@ -108,11 +99,12 @@ public class BrokerService implements MqttCallback {
         }
     }
 
-    public void playSong(Music song){
+    public void playSong(String topic, Music song){
         JSONObject songObj = new JSONObject();
-        songObj.put("Title",song.getTitle());
-        songObj.put("Artist",song.getArtist());
-        songObj.put("Year",song.getYear());
+        songObj.put("songid",song.getId());
+        songObj.put("title",song.getTitle());
+        songObj.put("artist",song.getArtist());
+        songObj.put("year",song.getYear());
         this.publishJson(topic, songObj);
     }
 
