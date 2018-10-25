@@ -1,5 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
+<!-- TODO's -->
+<!-- loadingTiles -->
+
+
 <head>
     <title>Dashboard</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -26,27 +31,28 @@
 <body>
 <div class="col-md-12" id="statsDiv">
     <div class="center">
+        <div class="col-md-10"><button id="refreshBtn">Refresh</button></div>
         <div class="col-md-4 tile" id="mostpopularTile">
-            <p><b>Most popular song</b></p>
-            <p th:text="${votes.mostLiked}"></p> <!-- TODO thymeleaf -->
+            <p><b>Most popular song</b> [<small id="mostPopularId">5</small>]</p> <!-- TODO ID placement -->
+            <p id="mostPopularString" th:text="${votes.mostLiked}"></p> <!-- TODO thymeleaf -->
             <p>
-                <i class="far fa-thumbs-up fa-2x upicon">188</i> <!-- TODO thymeleaf -->
-                <i class="far fa-thumbs-down fa-2x downicon">22</i> <!-- TODO thymeleaf -->
+                <i id="mostPopularUpvotes" class="far fa-thumbs-up fa-2x upicon">188</i> <!-- TODO thymeleaf -->
+                <i id="mostPopularDownvotes" class="far fa-thumbs-down fa-2x downicon">22</i> <!-- TODO thymeleaf -->
             </p>
         </div>
         <div class="col-md-4 tile" id="mostdislikedTile">
-            <p><b>Most disliked song</b></p>
-            <p th:text="${votes.mostDisliked}"></p>  <!-- TODO thymeleaf -->
+            <p><b>Most disliked song </b> [<small id="mostDislikedId">5</small>]</p> <!-- TODO ID placement -->
+            <p id="mostDislikedString" th:text="${votes.mostDisliked}"></p>  <!-- TODO thymeleaf -->
             <p>
-                <i class="far fa-thumbs-up fa-2x upicon">13</i> <!-- TODO thymeleaf -->
-                <i class="far fa-thumbs-down fa-2x downicon">139</i> <!-- TODO thymeleaf -->
+                <i id="mostDislikedUpvotes" class="far fa-thumbs-up fa-2x upicon">13</i> <!-- TODO thymeleaf -->
+                <i id="mostDislikedDownvotes" class="far fa-thumbs-down fa-2x downicon">139</i> <!-- TODO thymeleaf -->
             </p>
         </div>
         <div class="col-md-2 tile" id="bestvoterTile">
             <p><b>Best voter</b></p>
-            <i class="fas fa-user" th:text="${votes.bestVoter}"></i> <!-- TODO thymeleaf -->
+            <i id="bestVoterName" class="fas fa-user" th:text="${votes.bestVoter}"></i> <!-- TODO thymeleaf -->
             <div class="center">
-                <h3>139</h3> <!-- TODO thymeleaf -->
+                <h3 id="bestVoterCount">139</h3> <!-- TODO thymeleaf -->
             </div>
         </div>
     </div>
@@ -98,6 +104,14 @@
         var secondsIndex = 0;
         var amountOfVotesIndex = 1;
 
+        //Refresh data
+        var refreshURL = "";//"https://jsonplaceholder.typicode.com/todos/1";//"refresh";
+        var mostPopularIndex = 0;
+        var mostPopularIndices = [0,1,2,3,4,5]; //IMPORTANT order: id, title, artist, year, upvotes, downvotes
+        var mostDislikedIndex = 1;
+        var mostDislikedIndices = [0,1,2,3,4,5]; //IMPORTANT order: id, title, artist, year, upvotes, downvotes
+        var bestVoterIndex = 2;
+        var bestVoterIndices = [0, 1]; //IMPORTANT order: name, #votes
 
         //Create and fill table
         var table = $('#myTable').DataTable({
@@ -110,20 +124,71 @@
         });
 
 
-        /*<![CDATA[*/
+        $("#refreshBtn").on('click', function(){
+            loadingTiles(true);
+            $.ajax({
+                type: 'GET',
+                url: refreshURL,
+                success: function(json){
+                    loadingTiles(false);
+                    updateMostPopularTile(json.data[mostPopularIndex]);
+                    updateMostDislikedTile(json.data[mostDislikedIndex]);
+                    updateVoterTile(json.data[bestVoterIndex]);
+                } // end of success
+            }); // end of ajax call
+
+        });
+
+        function loadingTiles(bool){
+            //$("#refreshBtn").toggle();
+            $("#refreshBtn").attr('disabled', (bool)? 'disabled' : 'enabled'); //TODO ENABLE DOESNT WORK
+        }
+
+        function updateMostPopularTile(data){
+            var id = data[mostPopularIndices[0]];
+            var title = data[mostPopularIndices[1]];
+            var artist = data[mostPopularIndices[2]];
+            var year = data[mostPopularIndices[3]];
+            var upvotes = data[mostPopularIndices[4]];
+            var downvotes = data[mostPopularIndices[5]];
+            var songString = title + " - " + artist + " (" + year + ")";
+            $("#mostPopularId").text(id);
+            $("#mostPopularString").text(songString);
+            $("#mostPopularUpvotes").text(upvotes);
+            $("#mostPopularDownvotes").text(downvotes);
+        }
+
+        function updateMostDislikedTile(data){
+            var id = data[mostDislikedIndices[0]];
+            var title = data[mostDislikedIndices[1]];
+            var artist = data[mostDislikedIndices[2]];
+            var year = data[mostDislikedIndices[3]];
+            var upvotes = data[mostDislikedIndices[4]];
+            var downvotes = data[mostDislikedIndices[5]];
+            var songString = title + " - " + artist + " (" + year + ")";
+            $("#mostDislikedId").text(id);
+            $("#mostDislikedString").text(songString);
+            $("#mostDislikedUpvotes").text(upvotes);
+            $("#mostDislikedDownvotes").text(downvotes);
+        }
+
+        function updateVoterTile(data){
+            $("#bestVoterName").text(data[bestVoterIndices[0]]);
+            $("#bestVoterCount").text(data[bestVoterIndices[1]]);
+        }
+
         $('#mostpopularTile').on('click', function(){
-            var label = /*[[${mostliked.string}]]*/ 'MostLiked';
-            var id = /*[[${mostliked.id}]]*/ '0';
-            var url = id + ".json";
+            var label = $("#mostPopularString").text();
+            var id = $("#mostPopularId").text();
+            var url = votesURL + "/" + id + ".json";
             updateTable(url, label);
         });
         $('#mostdislikedTile').on('click', function(){
-            var label = /*[[${mostdisliked.string}]]*/ 'MostDisliked';
-            var id = /*[[${mostdisliked.id}]]*/ '0';
-            var url = id + ".json";
+            var label = $("#mostDislikedString").text();
+            var id = $("#mostDislikedId").text();
+            var url = votesURL + "/" + id + ".json";
             updateTable(url, label);
         });
-        /*]]>*/
 
 
         //Adds function to the button in the table
@@ -149,7 +214,7 @@
             }); // end of ajax call
         }
 
-        
+
         /* --- NO AJAX CALLS AFTER THIS COMMENT --- */
 
         //init chart
