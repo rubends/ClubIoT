@@ -7,9 +7,9 @@
     <script>
         function search() {
             //This method gets called when user enters search
-            const song = document.getElementById("song");
-            const artist = document.getElementById("artist");
-            const year = document.getElementById("year");
+            var song = document.getElementById("song");
+            var artist = document.getElementById("artist");
+            var year = document.getElementById("year");
 
             //TODO send query to database
             //TODO for each entery append list
@@ -18,8 +18,8 @@
         }
         function deleteList(){
             //This method deletes all entries from table
-            const table = document.getElementById("table");
-            for(let i = table.rows.length - 1; i > 1; i--)
+            var table = document.getElementById("table");
+            for(i = table.rows.length - 1; i > 1; i--)
             {
                 table.deleteRow(i);
             }
@@ -28,7 +28,7 @@
             //This method adds entries to table
             //testdata
             //TODO remove testdata
-            const array = [["A1", "B1", "C1"],
+             var array = [["A1", "B1", "C1"],
                 ["A2", "B2", "C2"],
                 ["A3", "B3", "C3"],
                 ["A4", "B4", "C4"],
@@ -44,16 +44,16 @@
                 array[0][1] = "Call Out My Name";
             }
 
-            const table = document.getElementById("table");
+            var table = document.getElementById("table");
 
-            for(let i = 0; i < array.length; i++)
+            for(i = 0; i < array.length; i++)
             {
                 // Create a new row
-                let newRow = table.insertRow(table.length);
-                for(let j = 0; j < array[i].length; j++)
+                var newRow = table.insertRow(table.length);
+                for(var j = 0; j < array[i].length; j++)
                 {
                     // Create a new cell
-                    let cell = newRow.insertCell(j);
+                    var cell = newRow.insertCell(j);
 
                     // add value to the cell
                     cell.innerHTML = array[i][j];
