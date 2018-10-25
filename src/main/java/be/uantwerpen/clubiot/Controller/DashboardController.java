@@ -5,6 +5,7 @@ import be.uantwerpen.clubiot.Model.Stats;
 import be.uantwerpen.clubiot.Service.DatabaseService;
 import be.uantwerpen.clubiot.Service.HadoopService;
 import com.fasterxml.jackson.databind.util.JSONPObject;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -37,7 +38,7 @@ public class DashboardController {
         stats.setMostLiked("mostLiked");
 
         model.addAttribute("stats", stats);
-        return "test";
+        return "dashboard";
     }
 
     @RequestMapping(value="/api/songs", method= RequestMethod.GET)
