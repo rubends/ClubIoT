@@ -7,7 +7,8 @@ public class VotesDummy
     private String bestVoter;
     private String welcome;
 
-    public VotesDummy(){
+    public VotesDummy()
+    {
         this.mostLiked = "Yes-R en PartySquad - Op die Beat";
         this.mostDisliked = "Takashi69 - fefe";
         this.bestVoter = "Steven";
