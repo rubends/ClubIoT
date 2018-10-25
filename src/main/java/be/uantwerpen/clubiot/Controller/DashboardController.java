@@ -1,23 +1,17 @@
 package be.uantwerpen.clubiot.Controller;
 
+import be.uantwerpen.clubiot.Model.Music;
 import be.uantwerpen.clubiot.Model.Stats;
-import be.uantwerpen.clubiot.Service.BrokerService;
 import be.uantwerpen.clubiot.Service.DatabaseService;
 import be.uantwerpen.clubiot.Service.HadoopService;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 
 @Controller
 public class DashboardController {
@@ -25,18 +19,23 @@ public class DashboardController {
     private DatabaseService databaseService;
     private HadoopService hadoopService;
 
-    @RequestMapping({"/dashboard"})
+    @RequestMapping(value={"/dashboard"}, method= RequestMethod.GET)
     public String showDashboard(ModelMap model){
+
+        databaseService = new DatabaseService();
+        hadoopService = new HadoopService();
 
         // TODO
         // [ ] use NOSQL service to request 'old data' ( MostLiked, BestVoter, ...)
         // [ ] *store data in "data" object
         // [ ] use data object as model to pass to dashboard template (inserted in html using thymeleaf)
         // [ ] return dashboard.html
+
+
         Stats stats = new Stats();
-
-
-
+        stats.setBestVoter("Stijn");
+        stats.setMostDisliked("mostDisliked");
+        stats.setMostLiked("mostLiked");
 
         model.addAttribute("stats", stats);
         return "dashboard";
@@ -46,8 +45,24 @@ public class DashboardController {
     public JSONObject getAllSongs(){
         // TODO
         // [ ] get All songs from SQL service
-        // [ ] return all songs JSON object
-        return null;
+        Iterable<Music> allMusic = databaseService.findAll();
+
+        JSONArray songArray = new JSONArray();
+        for(Music song: allMusic){
+            System.out.println(song.getId() + " " + song.getTitle());
+
+            JSONObject jsonSong = new JSONObject();
+            jsonSong.put("id", song.getId());
+            jsonSong.put("title", song.getTitle());
+            jsonSong.put("artist", song.getArtist());
+            jsonSong.put("year", song.getYear());
+            songArray.add(jsonSong);
+        }
+
+        JSONObject response = new JSONObject();
+        response.put("data", songArray);
+
+        return response;
     }
 
     @RequestMapping(value="/api/songs/{id}", method= RequestMethod.GET)
