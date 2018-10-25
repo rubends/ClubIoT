@@ -7,22 +7,24 @@ import be.uantwerpen.clubiot.Service.HadoopService;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class DashboardController {
 
+    @Autowired
     private DatabaseService databaseService;
     private HadoopService hadoopService;
 
     @RequestMapping(value={"/dashboard"}, method= RequestMethod.GET)
     public String showDashboard(ModelMap model){
 
-        databaseService = new DatabaseService();
         hadoopService = new HadoopService();
 
         // TODO
@@ -42,6 +44,7 @@ public class DashboardController {
     }
 
     @RequestMapping(value="/api/songs", method= RequestMethod.GET)
+    @ResponseBody
     public JSONObject getAllSongs(){
         // TODO
         // [ ] get All songs from SQL service
@@ -49,7 +52,7 @@ public class DashboardController {
 
         JSONArray songArray = new JSONArray();
         for(Music song: allMusic){
-            System.out.println(song.getId() + " " + song.getTitle());
+//            System.out.println(song.getId() + " " + song.getTitle());
 
             JSONObject jsonSong = new JSONObject();
             jsonSong.put("id", song.getId());
@@ -58,10 +61,9 @@ public class DashboardController {
             jsonSong.put("year", song.getYear());
             songArray.add(jsonSong);
         }
-
         JSONObject response = new JSONObject();
         response.put("data", songArray);
-
+        System.out.println(response);
         return response;
     }
 
