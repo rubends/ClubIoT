@@ -2,23 +2,15 @@ package be.uantwerpen.clubiot.Controller;
 
 import be.uantwerpen.clubiot.Model.Music;
 import be.uantwerpen.clubiot.Model.Stats;
-import be.uantwerpen.clubiot.Service.BrokerService;
 import be.uantwerpen.clubiot.Service.DatabaseService;
 import be.uantwerpen.clubiot.Service.HadoopService;
 import com.fasterxml.jackson.databind.util.JSONPObject;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 
 @Controller
 public class DashboardController {
@@ -26,7 +18,7 @@ public class DashboardController {
     private DatabaseService databaseService;
     private HadoopService hadoopService;
 
-    @RequestMapping({"/dashboard"})
+    @RequestMapping(value={"/dashboard"}, method= RequestMethod.GET)
     public String showDashboard(ModelMap model){
 
         databaseService = new DatabaseService();
