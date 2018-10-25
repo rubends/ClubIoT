@@ -1,16 +1,26 @@
 package be.uantwerpen.clubiot.Model;
 
-public class Stats {
+public class Stats
+{
     private String  mostLiked; // TODO make this an object : {id - name - etc}
     private String  mostDisliked;
     private String bestVoter;
     private String welcome;
 
-    public Stats(){
+    public Stats()
+    {
         this.mostLiked = "Yes-R en PartySquad - Op die Beat";
         this.mostDisliked = "Takashi69 - fefe";
         this.bestVoter = "Steven";
         this.welcome = "Made for IGNIS";
+    }
+
+    public Stats (String mostLiked, String mostDisliked, String bestVoter, String welcome)
+    {
+        this.mostLiked = mostLiked;
+        this.mostDisliked = mostDisliked;
+        this.bestVoter = bestVoter;
+        this.welcome = welcome;
     }
 
     public String getMostLiked() {

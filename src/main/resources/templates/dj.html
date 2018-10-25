@@ -12,26 +12,31 @@
         <th>Song</th>
         <th>Artist</th>
         <th>Release date</th>
+        <th>Play Button</th>
     </tr>
     <tr class="search">
         <td><input type="text" placeholder="Song" id="song" onchange="search()"/></td>
         <td><input type="text" placeholder="Artist name" id="artist" onchange="search()"/></td>
         <td><input type="number" placeholder="Year" id="year" onchange="search()"/></td>
     </tr>
-    <tr>
-        <td>Alles moet op</td>
-        <td>lamme frans</td>
-        <td>2018</td>
-    </tr>
+        <tr th:each="song : ${music}">
+        <td class="title" th:value="${title}"
+            th:text="${song.title }">title</td>
+        <td class="artist" th:value="${artist}"
+            th:text="${song.artist }">First Name</td>
+        <td class="year" th:value="${year}"
+            th:text="${song.year }">year</td>
+
+            <td class="id" th:value="${id}"
+                th:text="${song.id}">id</td>
+
+        </tr>
     <tr>
     </tr>
     </div>
 
-    <audio>
-        <source src="horse.mp3" type="audio/mpeg" />
-        Your browser does not support the audio element.
-    </audio>
 </table>
 </body>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="/js/app.js"></script>
 </html>
