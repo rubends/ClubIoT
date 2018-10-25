@@ -13,6 +13,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class DashboardController {
@@ -43,6 +44,7 @@ public class DashboardController {
     }
 
     @RequestMapping(value="/api/songs", method= RequestMethod.GET)
+    @ResponseBody
     public JSONObject getAllSongs(){
         // TODO
         // [ ] get All songs from SQL service
