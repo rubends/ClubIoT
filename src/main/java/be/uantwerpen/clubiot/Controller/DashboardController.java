@@ -42,8 +42,9 @@ public class DashboardController {
 
 
         brokerService = new BrokerService();
-        brokerService.connect("tcp://143.129.39.126:1883", "dj_web", "a134bie5"); // open connection: "tcp://iot.eclipse.org:1883"
-        brokerService.subscribe("music");
+        // IN CONSTRUCTOR
+       // brokerService.connect("tcp://143.129.39.126:1883", "dj_web", "a134bie5"); // open connection: "tcp://iot.eclipse.org:1883"
+       // brokerService.subscribe("music");
 //        brokerService.publishString("music", "Hello");
         brokerService.publishJson("music", musicObject);
 
