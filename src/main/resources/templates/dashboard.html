@@ -28,7 +28,7 @@
     <div class="center">
         <div class="col-md-4 tile" id="mostpopularTile">
             <p><b>Most popular song</b></p>
-            <p th:text="${votes.mostLiked}"></p>
+            <p th:text="${votes.mostLiked}"></p> <!-- TODO thymeleaf -->
             <p>
                 <i class="far fa-thumbs-up fa-2x upicon">188</i> <!-- TODO thymeleaf -->
                 <i class="far fa-thumbs-down fa-2x downicon">22</i> <!-- TODO thymeleaf -->
@@ -36,7 +36,7 @@
         </div>
         <div class="col-md-4 tile" id="mostdislikedTile">
             <p><b>Most disliked song</b></p>
-            <p th:text="${votes.mostDisliked}"></p>
+            <p th:text="${votes.mostDisliked}"></p>  <!-- TODO thymeleaf -->
             <p>
                 <i class="far fa-thumbs-up fa-2x upicon">13</i> <!-- TODO thymeleaf -->
                 <i class="far fa-thumbs-down fa-2x downicon">139</i> <!-- TODO thymeleaf -->
@@ -44,7 +44,7 @@
         </div>
         <div class="col-md-2 tile" id="bestvoterTile">
             <p><b>Best voter</b></p>
-            <i class="fas fa-user" th:text="${votes.bestVoter}"></i>
+            <i class="fas fa-user" th:text="${votes.bestVoter}"></i> <!-- TODO thymeleaf -->
             <div class="center">
                 <h3>139</h3> <!-- TODO thymeleaf -->
             </div>
@@ -81,33 +81,78 @@
     </div>
 </div>
 
-<p th:text="${votes.welcome}"></p>
-
-<script type="text/javascript">
+<script th:inline="javascript">
 
     $(document).ready( function () {
 
         //AJAX URLS
+        //Multiple songs
         var tableSongsURL = "arrays.json";
-
         var idIndex = 0;
         var titleIndex = 1;
         var artistIndex = 2;
         var pubYearIndex = 3;
 
-        var votesURL = "";
-        var secondsIndex = 1;
-        var amountOfVotesIndex = 2;
+        //Single Song
+        var votesURL = ""; // "/ID.json" comes after this url
+        var secondsIndex = 0;
+        var amountOfVotesIndex = 1;
 
-        //rescale height of tiles to the heighest height of a tile
-        var h1 = $("#mostpopularTile").height();
-        var h2 = $("#mostdislikedTile").height();
-        var h3 = $("#bestvoterTile").height();
-        var newHeight = Math.max(h1,h2,h3);
-        $("#mostpopularTile, #mostdislikedTile, #bestvoterTile").css("height", newHeight + "px");
 
-        //init placeholder chart
+        //Create and fill table
+        var table = $('#myTable').DataTable({
+            "ajax": tableSongsURL,
+            "columnDefs": [{
+                "targets": -1,
+                "data": null,
+                "defaultContent": "<div class='center'><i class='fas fa-chart-line'></i></div>"
+            }]
+        });
 
+
+        /*<![CDATA[*/
+        $('#mostpopularTile').on('click', function(){
+            var label = /*[[${mostliked.string}]]*/ 'MostLiked';
+            var id = /*[[${mostliked.id}]]*/ '0';
+            var url = id + ".json";
+            updateTable(url, label);
+        });
+        $('#mostdislikedTile').on('click', function(){
+            var label = /*[[${mostdisliked.string}]]*/ 'MostDisliked';
+            var id = /*[[${mostdisliked.id}]]*/ '0';
+            var url = id + ".json";
+            updateTable(url, label);
+        });
+        /*]]>*/
+
+
+        //Adds function to the button in the table
+        $('#myTable tbody').on('click','i', function(){
+            var tData = table.row($(this).parents('tr')).data();                    //Edit in case of JSON CHANGES
+            var label = tData[titleIndex] + ' - ' + tData[artistIndex] + ' ('+ tData[pubYearIndex] +')';
+            var url = votesURL + "/" + tData[idIndex] + ".json";
+            updateTable(url, label);
+        }); // end of onclick icon
+
+
+        //Gets the data on the given url and puts it in the chart with a label
+        function updateTable(url, label){
+            $.ajax({
+                type: 'GET',
+                url: url,
+                success: function(json){
+                    myChart.data.labels = json.data[secondsIndex];                   //Edit in case of JSON CHANGES
+                    myChart.data.datasets[0].data = json.data[amountOfVotesIndex];   //Edit in case of JSON CHANGES
+                    myChart.data.datasets[0].label = label;
+                    myChart.update();
+                } // end of success
+            }); // end of ajax call
+        }
+
+        
+        /* --- NO AJAX CALLS AFTER THIS COMMENT --- */
+
+        //init chart
         var ctx = document.getElementById("myChart").getContext('2d');
         var myChart = new Chart(ctx, {
             type: 'line',
@@ -146,54 +191,14 @@
             }
         }); // end of chart
 
-        //Create and fill table
-        var table = $('#myTable').DataTable({
-            "ajax": tableSongsURL,
-            "columnDefs": [{
-                "targets": -1,
-                "data": null,
-                "defaultContent": "<div class='center'><i class='fas fa-chart-line'></i></div>"
-            }]
-        });
 
-        /*  clicking most popular shows chart -- TODO IDs needed
-        $('#mostpopularTile').on('click', function(){
-            var id = 4;
-            var url = id + ".json";
-            var label = th:text="${votes.mostLiked}";
-            updateTable(url, label)
-        });
-        $('#mostdislikedTile').on('click', function(){
-            var id = 6;
-            var url = id + ".json";
-            var label = th:text="${votes.mostDisliked}";
-            updateTable(url, label)
-        });  */
+        //rescale height of tiles to the highest height of a tile
+        var h1 = $("#mostpopularTile").height();
+        var h2 = $("#mostdislikedTile").height();
+        var h3 = $("#bestvoterTile").height();
+        var newHeight = Math.max(h1,h2,h3);
+        $("#mostpopularTile, #mostdislikedTile, #bestvoterTile").css("height", newHeight + "px");
 
-
-
-        //Adds function to the button in the table
-        $('#myTable tbody').on('click','i', function(){
-            var tData = table.row($(this).parents('tr')).data(); //Edit in case of JSON CHANGES
-            var label = tData[titleIndex] + ' - ' + tData[artistIndex] + ' ('+ tData[pubYearIndex] +')';
-            var url = votesURL + "/" + tData[idIndex] + ".json";
-            updateTable(url, label);
-        }); // end of onclick icon
-
-
-        //Gets the data on the given url and puts it in the chart with a label
-        function updateTable(url, label){
-            $.ajax({
-                type: 'GET',
-                url: url,
-                success: function(json){
-                    myChart.data.labels = json.data[secondsIndex];                   //Edit in case of JSON CHANGES
-                    myChart.data.datasets[0].data = json.data[amountOfVotesIndex];   //Edit in case of JSON CHANGES
-                    myChart.data.datasets[0].label = label;
-                    myChart.update();
-                } // end of success
-            }); // end of ajax call
-        }
     }); // end of onready document
 </script>
 </body>
