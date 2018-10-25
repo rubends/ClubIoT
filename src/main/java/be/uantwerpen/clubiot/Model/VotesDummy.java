@@ -15,6 +15,14 @@ public class VotesDummy
         this.welcome = "Made for IGNIS";
     }
 
+    public VotesDummy (String mostLiked, String mostDisliked, String bestVoter, String welcome)
+    {
+        this.mostLiked = mostLiked;
+        this.mostDisliked = mostDisliked;
+        this.bestVoter = bestVoter;
+        this.welcome = welcome;
+    }
+
     public String getMostLiked() {
         return mostLiked;
     }
