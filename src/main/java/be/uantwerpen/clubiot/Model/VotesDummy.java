@@ -1,6 +1,7 @@
 package be.uantwerpen.clubiot.Model;
 
-public class VotesDummy {
+public class VotesDummy
+{
     private String mostLiked; // TODO make this an object : {id - name}
     private String mostDisliked;
     private String bestVoter;
