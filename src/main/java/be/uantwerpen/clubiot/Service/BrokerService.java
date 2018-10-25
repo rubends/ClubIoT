@@ -51,7 +51,6 @@ public class BrokerService implements MqttCallback {
         return client.isConnected();
     }
 
-
     public void subscribe(String topic){
         if(isConnected()){
             try {
@@ -64,18 +63,6 @@ public class BrokerService implements MqttCallback {
         }
     }
 
-//    public void publishTest(){
-//        if(isConnected()){
-//            MqttMessage msg = new MqttMessage();
-//            msg.setPayload("Hello Mqtt".getBytes());
-//            try {
-//                client.publish("TopicTest", msg);
-//            }
-//            catch(MqttException e){
-//                System.out.println("Publishing failed");
-//            }
-//        }
-//    }
 
     public void publishString(String topic, String message){
         if(isConnected()){
