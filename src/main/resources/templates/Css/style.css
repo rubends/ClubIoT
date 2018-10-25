@@ -1,0 +1,30 @@
+body{
+  padding-top: 10px;
+}
+
+.tile{
+  background-color: rgba(150,150,150,0.2);
+  border-radius: 10px;
+  margin: 3px;
+  border-color: rgba(150,150,150,1);
+  border-width: 1px;
+  border-style: solid;
+}
+
+.statsDiv{
+  padding-top: 10px;
+}
+
+.center {
+    margin: auto;
+    width: 50%;
+}
+
+.upicon{
+  color: rgb(140, 140, 140);
+  padding-right: 12px;
+}
+
+.downicon{
+  color: rgb(191, 191, 191);
+}

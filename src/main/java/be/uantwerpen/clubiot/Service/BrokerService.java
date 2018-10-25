@@ -1,5 +1,6 @@
 package be.uantwerpen.clubiot.Service;
 
+import be.uantwerpen.clubiot.Model.Music;
 import org.eclipse.paho.client.mqttv3.*;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
@@ -12,9 +13,13 @@ public class BrokerService implements MqttCallback {
 
     private IMqttClient client;
     String serverUri ;
+    String topic;
 
 
     public BrokerService(){
+        this.connect("tcp://143.129.39.126:1883", "dj_web", "a134bie5"); // open connection: "tcp://iot.eclipse.org:1883"
+        topic = "music";
+        this.subscribe(topic);
         System.out.println("Brokerservice Contructor");
     }
 
@@ -90,8 +95,12 @@ public class BrokerService implements MqttCallback {
         }
     }
 
-    public void playSong(int id){
-
+    public void playSong(Music song){
+        JSONObject songObj = new JSONObject();
+        songObj.put("Title",song.getTitle());
+        songObj.put("Artist",song.getArtist());
+        songObj.put("Year",song.getYear());
+        this.publishJson(topic, songObj);
     }
 
     // Mqtt Callbacks

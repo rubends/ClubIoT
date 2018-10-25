@@ -10,11 +10,21 @@ public class DatabaseService {
     @Autowired
     private MusicRepository musicRepository;
 
+    //TODO This is only for testing
+    public void addSongToRepo(String title, String artist, int year)
+    {
+        musicRepository.save(new Music(title,artist,year));
+    }
+
     public Iterable<Music> findAll() {
         return this.musicRepository.findAll();
     }
 
-    public Iterable<Music> findSong(String song){
-        return this.musicRepository.findByTitleContainingOrArtistContaining(song);
+    public Iterable<Music> findSongByText(String song){
+        return this.musicRepository.findByTitleContaining(song);
+    }
+
+    public Music findSongById(int id){
+        return this.musicRepository.findOne(id);
     }
 }
