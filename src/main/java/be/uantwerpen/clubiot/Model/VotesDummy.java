@@ -4,12 +4,13 @@ public class VotesDummy {
     private String mostLiked; // TODO make this an object : {id - name}
     private String mostDisliked;
     private String bestVoter;
+    private String welcome;
 
     public VotesDummy(){
         this.mostLiked = "Yes-R en PartySquad - Op die Beat";
         this.mostDisliked = "Takashi69 - fefe";
         this.bestVoter = "Steven";
-
+        this.welcome = "Made for IGNIS";
     }
 
     public String getMostLiked() {
@@ -23,4 +24,5 @@ public class VotesDummy {
     public String getBestVoter() {
         return bestVoter;
     }
+
 }

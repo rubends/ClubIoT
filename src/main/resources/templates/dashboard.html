@@ -1,33 +1,200 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head lang="en"></head>
+<head>
+    <title>Dashboard</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <!-- Jquery & bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+
+    <!-- Chart -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+
+    <!-- Custom -->
+    <link rel="stylesheet" href="Css/style.css">
+</head>
 <body>
-<h1>Hello Dashboard</h1>
-<p>Most Liked: <span th:text="${votes.mostLiked}"/></p>
-<p>Most Disliked: <span th:text="${votes.mostDisliked}"/></p>
-<p>Best Voter: <span th:text="${votes.bestVoter}"/></p>
+<div class="col-md-12" id="statsDiv">
+    <div class="center">
+        <div class="col-md-4 tile" id="mostpopularTile">
+            <p><b>Most popular song</b></p>
+            <p th:text="${votes.mostLiked}"></p>
+            <p>
+                <i class="far fa-thumbs-up fa-2x upicon">188</i> <!-- TODO thymeleaf -->
+                <i class="far fa-thumbs-down fa-2x downicon">22</i> <!-- TODO thymeleaf -->
+            </p>
+        </div>
+        <div class="col-md-4 tile" id="mostdislikedTile">
+            <p><b>Most disliked song</b></p>
+            <p th:text="${votes.mostDisliked}"></p>
+            <p>
+                <i class="far fa-thumbs-up fa-2x upicon">13</i> <!-- TODO thymeleaf -->
+                <i class="far fa-thumbs-down fa-2x downicon">139</i> <!-- TODO thymeleaf -->
+            </p>
+        </div>
+        <div class="col-md-2 tile" id="bestvoterTile">
+            <p><b>Best voter</b></p>
+            <i class="fas fa-user" th:text="${votes.bestVoter}"></i>
+            <div class="center">
+                <h3>139</h3> <!-- TODO thymeleaf -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-12" id="chartDiv">
+    <div class="center">
+        <div class="col-md-10">
+            <div class="chart-container center" style="position: relative; height:40vh; width:38vw">
+                <canvas id="myChart" class="chartjs-render-monitor"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-12" id="tableDiv">
+    <div class="center">
+        <div class="col-md-10">
+            <table id="myTable" class="table hover compact row-border">
+                <thead class="thead-default">
+                <tr>
+                    <th>Id</th>
+                    <th>Titel</th>
+                    <th>Artiest</th>
+                    <th>Jaar</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<p th:text="${votes.welcome}"></p>
+
+<script type="text/javascript">
+
+    $(document).ready( function () {
+
+        //AJAX URLS
+        var tableSongsURL = "arrays.json";
+
+        var idIndex = 0;
+        var titleIndex = 1;
+        var artistIndex = 2;
+        var pubYearIndex = 3;
+
+        var votesURL = "";
+        var secondsIndex = 1;
+        var amountOfVotesIndex = 2;
+
+        //rescale height of tiles to the heighest height of a tile
+        var h1 = $("#mostpopularTile").height();
+        var h2 = $("#mostdislikedTile").height();
+        var h3 = $("#bestvoterTile").height();
+        var newHeight = Math.max(h1,h2,h3);
+        $("#mostpopularTile, #mostdislikedTile, #bestvoterTile").css("height", newHeight + "px");
+
+        //init placeholder chart
+
+        var ctx = document.getElementById("myChart").getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: '',
+                    data: [],
+                    backgroundColor: 'rgba(150,150,150,0.2)',
+                    borderColor: 'rgba(150,150,150,1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'Votes during a song'
+                },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Seconds'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Votes'
+                        }
+                    }]
+                }
+            }
+        }); // end of chart
+
+        //Create and fill table
+        var table = $('#myTable').DataTable({
+            "ajax": tableSongsURL,
+            "columnDefs": [{
+                "targets": -1,
+                "data": null,
+                "defaultContent": "<div class='center'><i class='fas fa-chart-line'></i></div>"
+            }]
+        });
+
+        /*  clicking most popular shows chart -- TODO IDs needed
+        $('#mostpopularTile').on('click', function(){
+            var id = 4;
+            var url = id + ".json";
+            var label = th:text="${votes.mostLiked}";
+            updateTable(url, label)
+        });
+        $('#mostdislikedTile').on('click', function(){
+            var id = 6;
+            var url = id + ".json";
+            var label = th:text="${votes.mostDisliked}";
+            updateTable(url, label)
+        });  */
 
 
-<!--&lt;!&ndash;<span th:text="#{dashboard.mostliked} + ' ' + ${mostliked}"></span><br/>&ndash;&gt;-->
-<!--&lt;!&ndash;<span th:text="#{dashboard.mostdisliked} + ' ' + ${mostdisliked}"></span><br/>&ndash;&gt;-->
+
+        //Adds function to the button in the table
+        $('#myTable tbody').on('click','i', function(){
+            var tData = table.row($(this).parents('tr')).data(); //Edit in case of JSON CHANGES
+            var label = tData[titleIndex] + ' - ' + tData[artistIndex] + ' ('+ tData[pubYearIndex] +')';
+            var url = votesURL + "/" + tData[idIndex] + ".json";
+            updateTable(url, label);
+        }); // end of onclick icon
+
+
+        //Gets the data on the given url and puts it in the chart with a label
+        function updateTable(url, label){
+            $.ajax({
+                type: 'GET',
+                url: url,
+                success: function(json){
+                    myChart.data.labels = json.data[secondsIndex];                   //Edit in case of JSON CHANGES
+                    myChart.data.datasets[0].data = json.data[amountOfVotesIndex];   //Edit in case of JSON CHANGES
+                    myChart.data.datasets[0].label = label;
+                    myChart.update();
+                } // end of success
+            }); // end of ajax call
+        }
+    }); // end of onready document
+</script>
 </body>
 </html>
-
-s
-
-<!--<!DOCTYPE html>-->
-<!--<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">-->
-<!--<head>-->
-    <!--<meta charset="UTF-8">-->
-    <!--<title>Dashboard</title>-->
-<!--</head>-->
-<!--<body>-->
- <!--<div id="stats1"> &lt;!&ndash; Thymeleaf &ndash;&gt;-->
-     <!--&lt;!&ndash;<span th:text="#{dashboard.mostliked} + ' ' + ${mostliked}"></span><br/>&ndash;&gt;-->
-     <!--&lt;!&ndash;<span th:text="#{dashboard.mostdisliked} + ' ' + ${mostdisliked}"></span><br/>&ndash;&gt;-->
- <!--</div>-->
- <!--<div id="stats2"> &lt;!&ndash; AJAX &ndash;&gt;-->
-
- <!--</div>-->
-<!--</body>-->
-<!--</html>-->
