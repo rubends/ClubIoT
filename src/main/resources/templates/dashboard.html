@@ -24,7 +24,7 @@
 
     <!-- Chart -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="/style/style2.css"/>
+    <link rel="stylesheet" type="text/css" href="/style/style_dashboard.css"/>
 </head>
 <body>
 <div class="col-md-12" id="statsDiv">
@@ -103,7 +103,7 @@
         var amountOfVotesIndex = 1;
 
         //Refresh data
-        var refreshURL = "";//"https://jsonplaceholder.typicode.com/todos/1";//"refresh";
+        var refreshURL = "https://jsonplaceholder.typicode.com/todos/1";//"refresh";
         var mostPopularIndex = 0;
         var mostPopularIndices = [0,1,2,3,4,5]; //IMPORTANT order: id, title, artist, year, upvotes, downvotes
         var mostDislikedIndex = 1;
@@ -138,8 +138,7 @@
         });
 
         function loadingTiles(bool){
-            //$("#refreshBtn").toggle();
-            $("#refreshBtn").attr('disabled', (bool)? 'disabled' : 'enabled'); //TODO ENABLE DOESNT WORK
+            bool? $("#refreshBtn").attr('disabled', 'disabled') : $("#refreshBtn").removeAttr("disabled");
         }
 
         function updateMostPopularTile(data){

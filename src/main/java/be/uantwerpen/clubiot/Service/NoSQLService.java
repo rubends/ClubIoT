@@ -2,10 +2,7 @@ package be.uantwerpen.clubiot.Service;
 
 import be.uantwerpen.clubiot.Model.SongResult;
 import be.uantwerpen.clubiot.Model.Stats;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
+import com.mongodb.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.stereotype.Service;
@@ -25,7 +22,7 @@ public class NoSQLService
 
     public void refresh()
     {
-        hadoopService.startAll();
+        this.hadoopService.startAll();
     }
 
     public Stats getResults()
@@ -45,6 +42,39 @@ public class NoSQLService
 
 
         return dummy;
+    }
+
+    /**
+     * Return the sum of all up- and downvotes for a song with a given ID.
+     * @param songId
+     * @return
+     */
+    public int getVotes (long songId)
+    {
+        DB database = this.mongo.getDb();
+        DBCollection voteCache = database.getCollection("vote_cache");
+
+        DBObject query = new BasicDBObject("_id", new BasicDBObject("eq", songId));
+
+        DBCursor voteCacheIt = voteCache.find(query);
+
+        if (voteCacheIt.count() == 0)
+        {
+            System.err.println("Song ID \"" + songId + "\" wasn't present in NoSQL Database.");
+            return 0;
+        }
+
+        int numVotes = 0;
+
+        while (voteCacheIt.hasNext())
+        {
+            DBObject object =  voteCacheIt.next();
+
+            numVotes += (Integer)object.get("value");
+        }
+
+
+        return numVotes;
     }
 
     public SongResult getMostPopular()
@@ -80,7 +110,6 @@ public class NoSQLService
 
             result = new SongResult();
         }
-
 
         return result;
     }

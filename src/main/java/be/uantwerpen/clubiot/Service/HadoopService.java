@@ -41,7 +41,7 @@ public class HadoopService {
     }
 
     public void startTopUser() {
-        startHadoopCalculation("topUser");
+        startHadoopCalculation("countUserVotes");
     }
 
     private void startHadoopCalculation(String name) {
