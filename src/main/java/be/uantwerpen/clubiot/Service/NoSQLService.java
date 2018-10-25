@@ -53,36 +53,23 @@ public class NoSQLService
     public int getVotes (long songId)
     {
         DB database = this.mongo.getDb();
-
-        System.out.println("Database: " + database.getName());
-
-        for (String collection: database.getCollectionNames())
-        {
-            System.out.println("Collection: " + collection);
-        }
-
         DBCollection voteCache = database.getCollection("vote_cache");
 
-        DBObject query = new BasicDBObject("_id", songId);
+        DBObject query = new BasicDBObject("_id", Long.toString(songId));
 
-        DBCursor voteCacheIt = voteCache.find(/*query*/);
+        DBCursor voteCacheIt = voteCache.find(query);
 
-        System.out.println("vote_cache: " + voteCache.count());
-
-        /*
         if (voteCacheIt.count() == 0)
         {
             System.err.println("Song ID \"" + songId + "\" wasn't present in NoSQL Database.");
             return 0;
         }
-        */
+
         int numVotes = 0;
 
         while (voteCacheIt.hasNext())
         {
             DBObject object = voteCacheIt.next();
-
-            System.out.println(object.toString());
 
             numVotes += (Integer)object.get("value");
         }
@@ -100,6 +87,12 @@ public class NoSQLService
         DB database = this.mongo.getDb();
         DBCollection voteCache = database.getCollection("vote_cache");
         DBCursor voteCacheIt = voteCache.find();
+
+        if (voteCacheIt.count() == 0)
+        {
+            System.err.println("NoSQL doesn't contain any records");
+            return result;
+        }
 
         while (voteCacheIt.hasNext())
         {
@@ -119,6 +112,12 @@ public class NoSQLService
         DB database = this.mongo.getDb();
         DBCollection voteCache = database.getCollection("vote_cache");
         DBCursor voteCacheIt = voteCache.find();
+
+        if (voteCacheIt.count() == 0)
+        {
+            System.err.println("NoSQL doesn't contain any records");
+            return result;
+        }
 
         while (voteCacheIt.hasNext())
         {
