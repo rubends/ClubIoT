@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface MusicRepository extends CrudRepository<Music, Integer> {
-    List<Music> findByTitleContaining(String text);
+    List<Music> findAllByTitleContainingOrArtistContainingAllIgnoreCase(String text, String text2);
 }

@@ -82,48 +82,49 @@ public class DashboardController {
 
 
 
-    public void initMqttBroker(){
+//    public void initMqttBroker(){
+//
+//        JSONObject musicObject = new JSONObject();
+//        musicObject.put("title","Spring Nicht");
+//        musicObject.put("artist","Tokio Hotel");
+//        musicObject.put("year",1906);
+//        musicObject.put("songid",358666);
+//
+//
+//        brokerService = new BrokerService();
+//        // IN CONSTRUCTOR
+//       // brokerService.connect("tcp://143.129.39.126:1883", "dj_web", "a134bie5"); // open connection: "tcp://iot.eclipse.org:1883"
+//       // brokerService.subscribe("music");
+////        brokerService.publishString("music", "Hello");
+//        brokerService.publishJson("music", musicObject);
+//
+//    }
 
-        JSONObject musicObject = new JSONObject();
-        musicObject.put("title","Spring Nicht");
-        musicObject.put("artist","Tokio Hotel");
-        musicObject.put("year",1906);
-        musicObject.put("songid",358666);
+//    // Method for testing music json array passing to Dashboard
+//    public JSONArray parseJsonFile(String filepath){
+//        JSONParser parser = new JSONParser();
+//        JSONArray a = new JSONArray();
+//        JSONArray output = new JSONArray();
+//        try {
+//            a = (JSONArray) parser.parse(new FileReader(filepath));
+//        }
+//        catch(FileNotFoundException e){
+//            System.out.println("file not found");
+//        }
+//        catch(IOException e){
+//            System.out.println("IOException");
+//
+//        }
+//        catch(ParseException e){
+//            System.out.println("ParseException");
+//        }
+//
+//        for (Object o : a) {
+//            JSONObject item = (JSONObject) o;
+//            output.add(item);
+//        }
+//
+//        return output;
+//    }
 
-
-        brokerService = new BrokerService();
-        // IN CONSTRUCTOR
-       // brokerService.connect("tcp://143.129.39.126:1883", "dj_web", "a134bie5"); // open connection: "tcp://iot.eclipse.org:1883"
-       // brokerService.subscribe("music");
-//        brokerService.publishString("music", "Hello");
-        brokerService.publishJson("music", musicObject);
-
-    }
-
-    // Method for testing music json array passing to Dashboard
-    public JSONArray parseJsonFile(String filepath){
-        JSONParser parser = new JSONParser();
-        JSONArray a = new JSONArray();
-        JSONArray output = new JSONArray();
-        try {
-            a = (JSONArray) parser.parse(new FileReader(filepath));
-        }
-        catch(FileNotFoundException e){
-            System.out.println("file not found");
-        }
-        catch(IOException e){
-            System.out.println("IOException");
-
-        }
-        catch(ParseException e){
-            System.out.println("ParseException");
-        }
-
-        for (Object o : a) {
-            JSONObject item = (JSONObject) o;
-            output.add(item);
-        }
-
-        return output;
-    }
 }
