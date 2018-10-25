@@ -19,12 +19,17 @@ public class HadoopService {
 
 
     public void startAll() {
+        // start all calculations in parallel
         Thread votes = new Thread(this::startCountVotes);
         votes.start();
+
+        Thread topUser = new Thread(this::startTopUser);
+        topUser.start();
 
         try {
             //wait for all threads to finish
             votes.join();
+            topUser.join();
         }
         catch (InterruptedException e) {
             System.err.println("Thread join was interrupted");
@@ -33,6 +38,10 @@ public class HadoopService {
 
     public void startCountVotes() {
         startHadoopCalculation("countVotes");
+    }
+
+    public void startTopUser() {
+        startHadoopCalculation("topUser");
     }
 
     private void startHadoopCalculation(String name) {
@@ -56,7 +65,7 @@ public class HadoopService {
 
     private ClientHttpRequestFactory clientHttpRequestFactory() {
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-        factory.setReadTimeout(20000);
+        factory.setReadTimeout(25000);
         factory.setConnectTimeout(100);
         return factory;
     }
