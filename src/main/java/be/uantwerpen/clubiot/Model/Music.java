@@ -2,13 +2,15 @@ package be.uantwerpen.clubiot.Model;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "MUSIC")
-public class Music extends AbstractPersistable<Integer> { //ID TO CAPS
+@AttributeOverride(name="id", column=@Column(name="ID"))
+public class Music extends AbstractPersistable<Integer> {
     @Column(name="TITLE")
     private String title;
     @Column(name="ARTIST")
