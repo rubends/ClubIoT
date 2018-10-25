@@ -1,6 +1,7 @@
 html *
 {
     font-size: 1.00em !important;
+    font-family: sans-serif;
 }
 
 .songList{
@@ -29,4 +30,27 @@ body{
     /*color:  #EE7B01;*/
     color:  #ffffff;
     font-size: large;
+}
+.songid{
+    cursor: pointer;
+}
+
+.songid:hover{
+    font-weight: bold;
+}
+
+.playing{
+    width: 50%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    padding: 10px;
+    background-color: white;
+    color: black;
+    border-radius: 5px;
+}
+
+.playing bold {
+    font-weight: 600;
 }
