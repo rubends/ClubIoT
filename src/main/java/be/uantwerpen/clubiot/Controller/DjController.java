@@ -25,14 +25,15 @@ public class DjController {
     }
 
     @RequestMapping(value="/api/search", method= RequestMethod.GET)
-    public String searchSong(@RequestParam(value = "song", required = false) String search, ModelMap model)
+    @ResponseBody
+    public Iterable searchSong(@RequestParam(value = "song", required = false) String search)
     {
         Iterable<Music> songs = databaseService.findSongByText(search);
-        model.addAttribute("songs", songs);
-        return "dj";
+        return songs;
     }
 
     @RequestMapping(value="/api/play/{id}", method= RequestMethod.POST)
+    @ResponseBody
     public void playSong(@PathVariable int id)
     {
         Music song = databaseService.findSongById(id);
