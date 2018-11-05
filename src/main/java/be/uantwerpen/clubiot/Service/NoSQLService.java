@@ -1,11 +1,12 @@
 package be.uantwerpen.clubiot.Service;
 
-import be.uantwerpen.clubiot.Model.SongResult;
-import be.uantwerpen.clubiot.Model.Stats;
 import com.mongodb.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class NoSQLService
@@ -26,31 +27,12 @@ public class NoSQLService
         this.hadoopService.startAll();
     }
 
-    public Stats getResults()
-    {
-        Stats dummy = new Stats();
-
-        DB database = this.mongo.getDb();
-        DBCollection voteCache = database.getCollection("vote_cache");
-        DBCursor voteCacheIt = voteCache.find();
-
-        while (voteCacheIt.hasNext())
-        {
-            DBObject object =  voteCacheIt.next();
-
-            dummy = new Stats(object.toString(), "mostDisliked", "bestVoter", "welcome");
-        }
-
-
-        return dummy;
-    }
-
     /**
      * Return the sum of all up- and downvotes for a song with a given ID.
      * @param songId
      * @return
      */
-    public int getVotes (long songId)
+    public int getSongVotes (long songId)
     {
         DB database = this.mongo.getDb();
         DBCollection voteCache = database.getCollection("vote_cache");
@@ -80,35 +62,48 @@ public class NoSQLService
         return numVotes;
     }
 
-    public SongResult getMostPopular()
+    /**
+     * Return the number of votes a user with a specific ID has cast.
+     * @param userId
+     * @return
+     */
+    public int getUserVotes (long userId)
     {
-        SongResult result = new SongResult();
-
         DB database = this.mongo.getDb();
-        DBCollection voteCache = database.getCollection("vote_cache");
-        DBCursor voteCacheIt = voteCache.find();
+        DBCollection userVoteCache = database.getCollection("user_vote_cache");
 
-        if (voteCacheIt.count() == 0)
+        DBObject query = new BasicDBObject("uid", Long.toString(userId));
+
+        DBCursor userVoteCacheIt = userVoteCache.find(query);
+
+        if (userVoteCacheIt.count() == 0)
         {
-            System.err.println("NoSQL doesn't contain any records");
-            return result;
+            System.err.println("User ID \"" + userId + "\" wasn't present in NoSQL Database.");
+            return 0;
         }
 
-        while (voteCacheIt.hasNext())
-        {
-            DBObject object =  voteCacheIt.next();
+        int numVotes = 0;
 
-            result = new SongResult();
+        while (userVoteCacheIt.hasNext())
+        {
+            DBObject object = userVoteCacheIt.next();
+
+            numVotes += (Integer)object.get("value");
         }
 
+        userVoteCacheIt.close();
 
-        return result;
+
+        return numVotes;
     }
 
-    public SongResult getMostDisliked()
+    /**
+     * Return the ID of the most popular song.
+     * When no songs were found, -1 is returned.
+     * @return
+     */
+    public long getMostPopular()
     {
-        SongResult result = new SongResult();
-
         DB database = this.mongo.getDb();
         DBCollection voteCache = database.getCollection("vote_cache");
         DBCursor voteCacheIt = voteCache.find();
@@ -116,16 +111,90 @@ public class NoSQLService
         if (voteCacheIt.count() == 0)
         {
             System.err.println("NoSQL doesn't contain any records");
-            return result;
+            return -1;
         }
+
+        Map<Long, Long> votes = new HashMap<>();
 
         while (voteCacheIt.hasNext())
         {
             DBObject object =  voteCacheIt.next();
 
-            result = new SongResult();
+            long songId = Long.parseLong((String)object.get("_id"));
+            int vote = (int)object.get("value");
+
+            if (votes.containsKey(songId))
+            {
+                votes.put(songId, votes.get(songId) + vote);
+            }
+            else
+            {
+                votes.put(songId, (long)vote);
+            }
         }
 
-        return result;
+        long maxSongId = -1;
+        long maxVotes = Long.MIN_VALUE;
+
+        for (long songId : votes.keySet())
+        {
+            if (votes.get(songId) > maxVotes)
+            {
+                maxSongId = songId;
+                maxVotes = votes.get(songId);
+            }
+        }
+
+        return maxSongId;
+    }
+
+    /**
+     *  Return the Id of the least popular song.
+     *  When no songs were found, -1 is returned.
+     */
+    public long getLeastPopular()
+    {
+        DB database = this.mongo.getDb();
+        DBCollection voteCache = database.getCollection("vote_cache");
+        DBCursor voteCacheIt = voteCache.find();
+
+        if (voteCacheIt.count() == 0)
+        {
+            System.err.println("NoSQL doesn't contain any records");
+            return -1;
+        }
+
+        Map<Long, Long> votes = new HashMap<>();
+
+        while (voteCacheIt.hasNext())
+        {
+            DBObject object =  voteCacheIt.next();
+
+            long songId = Long.parseLong((String)object.get("_id "));
+            int vote = (int)object.get("value");
+
+            if (votes.containsKey(songId))
+            {
+                votes.put(songId, votes.get(songId) + vote);
+            }
+            else
+            {
+                votes.put(songId, (long)vote);
+            }
+        }
+
+        long minSongId = -1;
+        long minVotes = Long.MAX_VALUE;
+
+        for (long songId : votes.keySet())
+        {
+            if (votes.get(songId) < minVotes)
+            {
+                minSongId = songId;
+                minVotes = votes.get(songId);
+            }
+        }
+
+        return minSongId;
     }
 }
