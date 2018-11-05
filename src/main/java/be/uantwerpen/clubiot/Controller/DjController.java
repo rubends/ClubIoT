@@ -3,6 +3,8 @@ package be.uantwerpen.clubiot.Controller;
 import be.uantwerpen.clubiot.Model.Music;
 import be.uantwerpen.clubiot.Service.BrokerService;
 import be.uantwerpen.clubiot.Service.DatabaseService;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -22,12 +24,37 @@ public class DjController {
         return "dj";
     }
 
+//    @RequestMapping(value="/api/search", method= RequestMethod.GET)
+//    @ResponseBody
+//    public Iterable searchSong(@RequestParam(value = "song", required = false) String search, ModelMap model)
+//    {
+//        Iterable<Music> songResults = databaseService.findSongByText(search);
+//        model.addAttribute("searchMusic", searchMusic);
+//        return songResults;
+//    }
+
     @RequestMapping(value="/api/search", method= RequestMethod.GET)
     @ResponseBody
-    public Iterable searchSong(@RequestParam(value = "song", required = false) String search)
+    public JSONObject searchSong(@RequestParam(value = "song", required = false) String search)
     {
-        Iterable<Music> songs = databaseService.findSongByText(search);
-        return songs;
+        System.out.println("Test - The received string is: "+ search);
+
+        Iterable<Music> songResults = databaseService.findSongByText(search);
+
+        // Code from DashboardController
+        JSONArray songArray = new JSONArray();
+        for(Music song: songResults)
+        {
+            JSONObject jsonSong = new JSONObject();
+            jsonSong.put("id", song.getId());
+            jsonSong.put("title", song.getTitle());
+            jsonSong.put("artist", song.getArtist());
+            jsonSong.put("year", song.getYear());
+            songArray.add(jsonSong);
+        }
+        JSONObject searchResults = new JSONObject();
+        searchResults.put("data", songArray);
+        return searchResults;
     }
 
     @RequestMapping(value="/api/play/{id}", method= RequestMethod.POST)
