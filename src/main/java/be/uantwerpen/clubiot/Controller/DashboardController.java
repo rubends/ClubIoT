@@ -45,7 +45,7 @@ public class DashboardController {
 
         // get vote numbers
         int mostPopularVotes = noSQLService.getSongVotes(mostPopularId);
-        int leastPopularVotes = noSQLService.getSongVotes(mostPopularId);
+        int leastPopularVotes = noSQLService.getSongVotes(leastPopularId);
 
 
         // get fields of most/least popular songs
