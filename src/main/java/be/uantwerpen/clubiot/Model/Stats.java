@@ -2,20 +2,20 @@ package be.uantwerpen.clubiot.Model;
 
 public class Stats
 {
-    private String  mostLiked; // TODO make this an object : {id - name - etc}
-    private String  mostDisliked;
+    private SongResult  mostLiked; // TODO make this an object : {id - name - etc}
+    private SongResult  mostDisliked;
     private String bestVoter;
     private String welcome;
 
     public Stats()
     {
-        this.mostLiked = "Yes-R en PartySquad - Op die Beat";
-        this.mostDisliked = "Takashi69 - fefe";
-        this.bestVoter = "Steven";
-        this.welcome = "Made for IGNIS";
+        this.mostLiked = new SongResult();
+        this.mostDisliked = new SongResult();
+        this.bestVoter = "Default user";
+        this.welcome = "Welcome Ignis";
     }
 
-    public Stats (String mostLiked, String mostDisliked, String bestVoter, String welcome)
+    public Stats (SongResult mostLiked, SongResult mostDisliked, String bestVoter, String welcome)
     {
         this.mostLiked = mostLiked;
         this.mostDisliked = mostDisliked;
@@ -23,11 +23,11 @@ public class Stats
         this.welcome = welcome;
     }
 
-    public String getMostLiked() {
+    public SongResult getMostLiked() {
         return mostLiked;
     } // TODO also make them return objects here
 
-    public String getMostDisliked() {
+    public SongResult getMostDisliked() {
         return mostDisliked;
     }
 
@@ -35,11 +35,11 @@ public class Stats
         return bestVoter;
     }
 
-    public void setMostLiked(String mostLiked) {
+    public void setMostLiked(SongResult mostLiked) {
         this.mostLiked = mostLiked;
     }
 
-    public void setMostDisliked(String mostDisliked) {
+    public void setMostDisliked(SongResult mostDisliked) {
         this.mostDisliked = mostDisliked;
     }
 

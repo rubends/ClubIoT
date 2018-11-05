@@ -31,28 +31,43 @@ public class DashboardController {
 
     @RequestMapping(value={"/dashboard"}, method= RequestMethod.GET)
     public String showDashboard(ModelMap model){
-
-        databaseService = new DatabaseService();
-        noSQLService = new NoSQLService();
-        // TODO
         // [ ] use NOSQL service to request 'old data' ( MostLiked, BestVoter, ...) => returns song id
         // [ ] *store stats in "stats" object
         // [ ] use data object as model to pass to dashboard template (inserted in html using thymeleaf)
         // [ ] return dashboard.html
 
-        SongResult mostLikedResult = noSQLService.getMostPopular();
-        SongResult mostDislikedResult = noSQLService.getMostDisliked();
+        databaseService = new DatabaseService();
 
-        Music mostLikedSong = databaseService.findSongById(mostDislikedResult.getSongId());
-        Music mostDislikedSong = databaseService.findSongById(mostDislikedResult.getSongId());
+        // get most/least popular songs
+        long mostPopularId = noSQLService.getMostPopular();
+        long leastPopularId = noSQLService.getLeastPopular();
 
+        // get vote numbers
+        int mostPopularVotes = noSQLService.getSongVotes(mostPopularId);
+        int leastPopularVotes = noSQLService.getSongVotes(mostPopularId);
 
-        //
+        // get fields of most/least popular songs
+        Music mostLikedSong = databaseService.findSongById((int)mostPopularId);
+        Music leastLikedSong = databaseService.findSongById((int)leastPopularId);
+
+        // combine fields/votes into Songresult objects (combined votecount instead of separate up/down)
+        SongResult mostLikedResult = new SongResult(mostPopularId, mostPopularVotes, mostPopularVotes);
+        mostLikedResult.setArtist(mostLikedSong.getArtist());
+        mostLikedResult.setYear(mostLikedSong.getYear());
+        mostLikedResult.setTitle(mostLikedSong.getTitle());
+
+        SongResult leastLikedResult = new SongResult(leastPopularId, leastPopularVotes, leastPopularVotes);
+        leastLikedResult.setArtist(leastLikedSong.getArtist());
+        leastLikedResult.setYear(leastLikedSong.getYear());
+        leastLikedResult.setTitle(leastLikedSong.getTitle());
+
+        // fill stats object
         Stats stats = new Stats();
-        stats.setBestVoter("Stijn");
-        stats.setMostDisliked("mostDisliked");
-        stats.setMostLiked("mostLiked");
+        stats.setBestVoter("Thomas");
+        stats.setMostLiked(mostLikedResult);
+        stats.setMostDisliked(leastLikedResult);
 
+        // pass stats as an atrribute of dashboard
         model.addAttribute("stats", stats);
         return "dashboard";
     }
