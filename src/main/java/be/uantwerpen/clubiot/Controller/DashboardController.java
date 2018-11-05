@@ -25,6 +25,7 @@ public class DashboardController {
     private DatabaseService databaseService;
 
     private HadoopService hadoopService;
+    private NoSQLService noSqlService;
 
     @Autowired
     NoSQLService noSQLService;
@@ -106,13 +107,54 @@ public class DashboardController {
 
     @RequestMapping(value="/api/refresh", method= RequestMethod.GET)
     public JSONObject refresh(){
-        // TODO
-        // [ ] use HADOOP Service to trigger a refresh
-        //      -> continue when hadoopservice returns "done"
-        // [ ] use NOQL service to request the "refreshed" data ( MostLiked, BestVoter, ...)
-        // [ ] return json object
 
-        return null;
+        //get new data
+        noSqlService.refresh();
+        //get leastpopuler, mostpopular and best voter
+        long leastPopularID = noSqlService.getLeastPopular();
+        int leastPopularVotes = noSqlService.getSongVotes(leastPopularID);
+
+        long mostPopularID = noSqlService.getMostPopular();
+        int mostPopulerVotes = noSqlService.getSongVotes(mostPopularID);
+
+        String bestVoter = noSqlService.getMostActiveVoter();
+        int votesCount = noSqlService.getUserVotes(bestVoter);
+
+        //get names from id
+        Music leastPopular = databaseService.findSongById((int)leastPopularID);
+        Music mostPopular = databaseService.findSongById((int)mostPopularID);
+
+        //JSON objects: data: [mostPopular {id, title, artist, year, votes},
+        //              mostDisliked {id, title, artist, year, votes},
+        //              bestVoter {name, votesCount}]
+
+        //set object mostPopular
+        JSONObject mostPopularObject = new JSONObject();
+        mostPopularObject.put("id",mostPopular.getId());
+        mostPopularObject.put("title",mostPopular.getTitle());
+        mostPopularObject.put("artist",mostPopular.getArtist());
+        mostPopularObject.put("year",mostPopular.getYear());
+        mostPopularObject.put("votes",mostPopulerVotes);
+
+        //set object mostDisliked
+        JSONObject mostDislikedObject = new JSONObject();
+        mostDislikedObject.put("id",leastPopular.getId());
+        mostDislikedObject.put("title",leastPopular.getTitle());
+        mostDislikedObject.put("artist",leastPopular.getArtist());
+        mostDislikedObject.put("year",leastPopular.getYear());
+        mostDislikedObject.put("votes",leastPopularVotes);
+
+        //set object bestvoter
+        JSONObject bestVoterObject = new JSONObject();
+        bestVoterObject.put("name",bestVoter);
+        bestVoterObject.put("votesCount",votesCount);
+
+        //set object data
+        JSONObject data = new JSONObject();
+        data.put("mostPopular", mostPopularObject);
+        data.put("mostDisliked",mostDislikedObject);
+        data.put("bestVoter",bestVoterObject);
+        return data;
     }
 
 
