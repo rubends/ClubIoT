@@ -8,7 +8,8 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import javax.sql.DataSource;
 
 @SpringBootApplication
-public class ClubiotApplication {
+public class
+ClubiotApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(ClubiotApplication.class, args);
