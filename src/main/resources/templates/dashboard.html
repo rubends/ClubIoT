@@ -32,7 +32,7 @@
         <div class="col-md-10"><button class="btn btn-outline-secondary btn-block" id="refreshBtn">Refresh</button></div>
         <div class="col-md-4 tile" id="mostpopularTile">
             <p><b>Most popular song</b> [<small id="mostPopularId" th:text="${stats.mostLiked.songId}">0</small>]</p>
-            <p id="mostPopularString" th:text="${stats.mostLiked.title} + ' - ' + ${stats.mostDisliked.artist}"></p>
+            <p id="mostPopularString" th:text="${stats.mostLiked.title} + ' - ' + ${stats.mostLiked.artist}"></p>
             <p>
                 <i id="mostPopularVotes" th:text="${stats.mostLiked.upvotes}" class="far fa-thumbs-up fa-2x icon">0</i>
             </p>
