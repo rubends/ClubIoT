@@ -31,7 +31,7 @@
     <div class="center">
         <div class="col-md-10"><button id="refreshBtn">Refresh</button></div>
         <div class="col-md-4 tile" id="mostpopularTile">
-            <p><b>Most popular song</b> [<small id="mostPopularId">5</small>]</p> <!-- TODO ID placement -->
+            <p><b>Most popular song</b> [<small id="mostPopularId">1</small>]</p> <!-- TODO ID placement -->
             <p id="mostPopularString" th:text="${stats.mostLiked}"></p> <!-- TODO thymeleaf -->
             <p>
                 <i id="mostPopularUpvotes" class="far fa-thumbs-up fa-2x upicon">188</i> <!-- TODO thymeleaf -->
@@ -39,7 +39,7 @@
             </p>
         </div>
         <div class="col-md-4 tile" id="mostdislikedTile">
-            <p><b>Most disliked song </b> [<small id="mostDislikedId">5</small>]</p> <!-- TODO ID placement -->
+            <p><b>Most disliked song </b> [<small id="mostDislikedId">2</small>]</p> <!-- TODO ID placement -->
             <p id="mostDislikedString" th:text="${stats.mostDisliked}"></p>  <!-- TODO thymeleaf -->
             <p>
                 <i id="mostDislikedUpvotes" class="far fa-thumbs-up fa-2x upicon">13</i> <!-- TODO thymeleaf -->
@@ -90,26 +90,21 @@
     $(document).ready( function () {
 
         //AJAX URLS
-        //Multiple songs
-        var tableSongsURL = "arrays.json";
-        var idIndex = 0;
-        var titleIndex = 1;
-        var artistIndex = 2;
-        var pubYearIndex = 3;
 
-        //Single Song
-        var votesURL = ""; // "/ID.json" comes after this url
-        var secondsIndex = 0;
-        var amountOfVotesIndex = 1;
+        //ALL SONGS
+        var tableSongsURL = "/api/songs";
+        //JSON objects: data: {id, artist, title, year}
 
-        //Refresh data
-        var refreshURL = "https://jsonplaceholder.typicode.com/todos/1";//"refresh";
-        var mostPopularIndex = 0;
-        var mostPopularIndices = [0,1,2,3,4,5]; //IMPORTANT order: id, title, artist, year, upvotes, downvotes
-        var mostDislikedIndex = 1;
-        var mostDislikedIndices = [0,1,2,3,4,5]; //IMPORTANT order: id, title, artist, year, upvotes, downvotes
-        var bestVoterIndex = 2;
-        var bestVoterIndices = [0, 1]; //IMPORTANT order: name, #votes
+        //SINGLE SONG WITH VOTES
+        var votesURL = "/api/votes"; // "/{ID}.json" comes after this url
+        //JSON objects: data: {seconds, amountOfVotes}
+
+        //REFRESH API
+        var refreshURL = "/api/refresh";
+        //JSON objects: data: [mostPopular {id, title, artist, year, upvotes, downvotes},
+        //              mostDisliked {id, title, artist, year, upvotes, downvotes},
+        //              bestVoter {name, votesCount}]
+
 
         //Create and fill table
         var table = $('#myTable').DataTable({
@@ -118,7 +113,14 @@
                 "targets": -1,
                 "data": null,
                 "defaultContent": '<div class="center"><i class="fas fa-chart-line"></i></div>'
-            }]
+            }],
+            "columns": [
+                { "data": "id" },
+                { "data": "title" },
+                { "data": "artist" },
+                { "data": "year" },
+                {"data": null}
+            ]
         });
 
 
@@ -129,9 +131,9 @@
                 url: refreshURL,
                 success: function(json){
                     loadingTiles(false);
-                    updateMostPopularTile(json.data[mostPopularIndex]);
-                    updateMostDislikedTile(json.data[mostDislikedIndex]);
-                    updateVoterTile(json.data[bestVoterIndex]);
+                    updateMostPopularTile(json.data.mostPopular);
+                    updateMostDislikedTile(json.data.mostDisliked);
+                    updateVoterTile(json.data.bestVoter);
                 } // end of success
             }); // end of ajax call
 
@@ -142,69 +144,57 @@
         }
 
         function updateMostPopularTile(data){
-            var id = data[mostPopularIndices[0]];
-            var title = data[mostPopularIndices[1]];
-            var artist = data[mostPopularIndices[2]];
-            var year = data[mostPopularIndices[3]];
-            var upvotes = data[mostPopularIndices[4]];
-            var downvotes = data[mostPopularIndices[5]];
-            var songString = title + " - " + artist + " (" + year + ")";
-            $("#mostPopularId").text(id);
+            var songString = data.title + " - " + data.artist + " (" + data.year + ")";
+            $("#mostPopularId").text(data.id);
             $("#mostPopularString").text(songString);
-            $("#mostPopularUpvotes").text(upvotes);
-            $("#mostPopularDownvotes").text(downvotes);
+            $("#mostPopularUpvotes").text(data.upvotes);
+            $("#mostPopularDownvotes").text(data.downvotes);
         }
 
         function updateMostDislikedTile(data){
-            var id = data[mostDislikedIndices[0]];
-            var title = data[mostDislikedIndices[1]];
-            var artist = data[mostDislikedIndices[2]];
-            var year = data[mostDislikedIndices[3]];
-            var upvotes = data[mostDislikedIndices[4]];
-            var downvotes = data[mostDislikedIndices[5]];
-            var songString = title + " - " + artist + " (" + year + ")";
-            $("#mostDislikedId").text(id);
+            var songString = data.title + " - " + data.artist + " (" + data.year + ")";
+            $("#mostDislikedId").text(data.id);
             $("#mostDislikedString").text(songString);
-            $("#mostDislikedUpvotes").text(upvotes);
-            $("#mostDislikedDownvotes").text(downvotes);
+            $("#mostDislikedUpvotes").text(data.upvotes);
+            $("#mostDislikedDownvotes").text(data.downvotes);
         }
 
         function updateVoterTile(data){
-            $("#bestVoterName").text(data[bestVoterIndices[0]]);
-            $("#bestVoterCount").text(data[bestVoterIndices[1]]);
+            $("#bestVoterName").text(data.name);
+            $("#bestVoterCount").text(data.votesCount);
         }
 
         $('#mostpopularTile').on('click', function(){
             var label = $("#mostPopularString").text();
             var id = $("#mostPopularId").text();
             var url = votesURL + "/" + id + ".json";
-            updateTable(url, label);
+            updateChart(url, label);
         });
         $('#mostdislikedTile').on('click', function(){
             var label = $("#mostDislikedString").text();
             var id = $("#mostDislikedId").text();
             var url = votesURL + "/" + id + ".json";
-            updateTable(url, label);
+            updateChart(url, label);
         });
 
 
         //Adds function to the button in the table
         $('#myTable tbody').on('click','i', function(){
-            var tData = table.row($(this).parents('tr')).data();                    //Edit in case of JSON CHANGES
-            var label = tData[titleIndex] + ' - ' + tData[artistIndex] + ' ('+ tData[pubYearIndex] +')';
-            var url = votesURL + "/" + tData[idIndex] + ".json";
-            updateTable(url, label);
+            var tData = table.row($(this).parents('tr')).data();//Edit in case of JSON CHANGES
+            var label = tData.title + ' - ' + tData.artist + ' ('+ tData.year +')';
+            var url = votesURL + "/" + tData.id + ".json";
+            updateChart(url, label);
         }); // end of onclick icon
 
 
         //Gets the data on the given url and puts it in the chart with a label
-        function updateTable(url, label){
+        function updateChart(url, label){
             $.ajax({
                 type: 'GET',
                 url: url,
                 success: function(json){
-                    myChart.data.labels = json.data[secondsIndex];                   //Edit in case of JSON CHANGES
-                    myChart.data.datasets[0].data = json.data[amountOfVotesIndex];   //Edit in case of JSON CHANGES
+                    myChart.data.labels = json.data.seconds;                   //Edit in case of JSON CHANGES
+                    myChart.data.datasets[0].data = json.data.amountOfVotes;   //Edit in case of JSON CHANGES
                     myChart.data.datasets[0].label = label;
                     myChart.update();
                 } // end of success
