@@ -67,12 +67,12 @@ public class NoSQLService
      * @param userId
      * @return
      */
-    public int getUserVotes (long userId)
+    public int getUserVotes (String userId)
     {
         DB database = this.mongo.getDb();
         DBCollection userVoteCache = database.getCollection("user_vote_cache");
 
-        DBObject query = new BasicDBObject("uid", Long.toString(userId));
+        DBObject query = new BasicDBObject("uid", userId);
 
         DBCursor userVoteCacheIt = userVoteCache.find(query);
 
