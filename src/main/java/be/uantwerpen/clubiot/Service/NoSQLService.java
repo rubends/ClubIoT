@@ -104,34 +104,7 @@ public class NoSQLService
      */
     public long getMostPopular()
     {
-        DB database = this.mongo.getDb();
-        DBCollection voteCache = database.getCollection("vote_cache");
-        DBCursor voteCacheIt = voteCache.find();
-
-        if (voteCacheIt.count() == 0)
-        {
-            System.err.println("NoSQL doesn't contain any records");
-            return -1;
-        }
-
-        Map<Long, Long> votes = new HashMap<>();
-
-        while (voteCacheIt.hasNext())
-        {
-            DBObject object =  voteCacheIt.next();
-
-            long songId = Long.parseLong((String)object.get("_id"));
-            int vote = (int)object.get("value");
-
-            if (votes.containsKey(songId))
-            {
-                votes.put(songId, votes.get(songId) + vote);
-            }
-            else
-            {
-                votes.put(songId, (long)vote);
-            }
-        }
+        Map<Long, Long> votes = this.getVotes();
 
         long maxSongId = -1;
         long maxVotes = Long.MIN_VALUE;
@@ -154,6 +127,24 @@ public class NoSQLService
      */
     public long getLeastPopular()
     {
+        Map<Long, Long> votes = this.getVotes();
+        long minSongId = -1;
+        long minVotes = Long.MAX_VALUE;
+
+        for (long songId : votes.keySet())
+        {
+            if (votes.get(songId) < minVotes)
+            {
+                minSongId = songId;
+                minVotes = votes.get(songId);
+            }
+        }
+
+        return minSongId;
+    }
+
+    public Map<Long, Long> getVotes()
+    {
         DB database = this.mongo.getDb();
         DBCollection voteCache = database.getCollection("vote_cache");
         DBCursor voteCacheIt = voteCache.find();
@@ -161,7 +152,7 @@ public class NoSQLService
         if (voteCacheIt.count() == 0)
         {
             System.err.println("NoSQL doesn't contain any records");
-            return -1;
+            return new HashMap<>();
         }
 
         Map<Long, Long> votes = new HashMap<>();
@@ -183,18 +174,6 @@ public class NoSQLService
             }
         }
 
-        long minSongId = -1;
-        long minVotes = Long.MAX_VALUE;
-
-        for (long songId : votes.keySet())
-        {
-            if (votes.get(songId) < minVotes)
-            {
-                minSongId = songId;
-                minVotes = votes.get(songId);
-            }
-        }
-
-        return minSongId;
+        return votes;
     }
 }
