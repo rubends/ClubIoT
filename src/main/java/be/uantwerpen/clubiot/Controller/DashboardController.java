@@ -37,7 +37,6 @@ public class DashboardController {
         // [ ] use data object as model to pass to dashboard template (inserted in html using thymeleaf)
         // [ ] return dashboard.html
 
-        databaseService = new DatabaseService();
 
         // get most/least popular songs
         long mostPopularId = noSQLService.getMostPopular();
@@ -46,6 +45,7 @@ public class DashboardController {
         // get vote numbers
         int mostPopularVotes = noSQLService.getSongVotes(mostPopularId);
         int leastPopularVotes = noSQLService.getSongVotes(mostPopularId);
+
 
         // get fields of most/least popular songs
         Music mostLikedSong = databaseService.findSongById((int)mostPopularId);
