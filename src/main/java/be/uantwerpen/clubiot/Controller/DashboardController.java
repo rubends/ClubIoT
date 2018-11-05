@@ -56,6 +56,7 @@ public class DashboardController {
         mostLikedResult.setArtist(mostLikedSong.getArtist());
         mostLikedResult.setYear(mostLikedSong.getYear());
         mostLikedResult.setTitle(mostLikedSong.getTitle());
+        System.out.println(mostLikedSong);
 
         SongResult leastLikedResult = new SongResult(leastPopularId, leastPopularVotes, leastPopularVotes);
         leastLikedResult.setArtist(leastLikedSong.getArtist());
@@ -109,16 +110,16 @@ public class DashboardController {
     public JSONObject refresh(){
 
         //get new data
-        noSqlService.refresh();
+        noSQLService.refresh();
         //get leastpopuler, mostpopular and best voter
-        long leastPopularID = noSqlService.getLeastPopular();
-        int leastPopularVotes = noSqlService.getSongVotes(leastPopularID);
+        long leastPopularID = noSQLService.getLeastPopular();
+        int leastPopularVotes = noSQLService.getSongVotes(leastPopularID);
 
-        long mostPopularID = noSqlService.getMostPopular();
-        int mostPopulerVotes = noSqlService.getSongVotes(mostPopularID);
+        long mostPopularID = noSQLService.getMostPopular();
+        int mostPopulerVotes = noSQLService.getSongVotes(mostPopularID);
 
-        String bestVoter = noSqlService.getMostActiveVoter();
-        int votesCount = noSqlService.getUserVotes(bestVoter);
+        String bestVoter = noSQLService.getMostActiveVoter();
+        int votesCount = noSQLService.getUserVotes(bestVoter);
 
         //get names from id
         Music leastPopular = databaseService.findSongById((int)leastPopularID);
@@ -129,12 +130,15 @@ public class DashboardController {
         //              bestVoter {name, votesCount}]
 
         //set object mostPopular
+
+        JSONArray jsonArray = new JSONArray();
         JSONObject mostPopularObject = new JSONObject();
         mostPopularObject.put("id",mostPopular.getId());
         mostPopularObject.put("title",mostPopular.getTitle());
         mostPopularObject.put("artist",mostPopular.getArtist());
         mostPopularObject.put("year",mostPopular.getYear());
         mostPopularObject.put("votes",mostPopulerVotes);
+        jsonArray.add(mostPopularObject);
 
         //set object mostDisliked
         JSONObject mostDislikedObject = new JSONObject();
@@ -143,17 +147,22 @@ public class DashboardController {
         mostDislikedObject.put("artist",leastPopular.getArtist());
         mostDislikedObject.put("year",leastPopular.getYear());
         mostDislikedObject.put("votes",leastPopularVotes);
+        jsonArray.add(mostDislikedObject);
 
         //set object bestvoter
         JSONObject bestVoterObject = new JSONObject();
         bestVoterObject.put("name",bestVoter);
         bestVoterObject.put("votesCount",votesCount);
+        jsonArray.add(bestVoter);
 
         //set object data
+
         JSONObject data = new JSONObject();
-        data.put("mostPopular", mostPopularObject);
-        data.put("mostDisliked",mostDislikedObject);
-        data.put("bestVoter",bestVoterObject);
+//        data.put("mostPopular", mostPopularObject);
+//        data.put("mostDisliked",mostDislikedObject);
+//        data.put("bestVoter",bestVoterObject);
+        data.put("data", jsonArray);
+        System.out.println("data: " + data);
         return data;
     }
 

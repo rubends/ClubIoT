@@ -32,14 +32,14 @@
         <div class="col-md-10"><button id="refreshBtn">Refresh</button></div>
         <div class="col-md-4 tile" id="mostpopularTile">
             <p><b>Most popular song</b> [<small id="mostPopularId">1</small>]</p> <!-- TODO ID placement -->
-            <p id="mostPopularString" th:text="${stats.mostLiked}"></p> <!-- TODO thymeleaf -->
+            <p id="mostPopularString" th:text="${stats.mostLiked.title}"></p> <!-- TODO thymeleaf -->
             <p>
                 <i id="mostPopularUpvotes" class="far fa-thumbs-up fa-2x upicon">188</i> <!-- TODO thymeleaf -->
                 <i id="mostPopularDownvotes" class="far fa-thumbs-down fa-2x downicon">22</i> <!-- TODO thymeleaf -->
             </p>
         </div>
         <div class="col-md-4 tile" id="mostdislikedTile">
-            <p><b>Most disliked song </b> [<small id="mostDislikedId">2</small>]</p> <!-- TODO ID placement -->
+            <p><b>Most disliked song </b> [<small id="mostDislikedId.title">2</small>]</p> <!-- TODO ID placement -->
             <p id="mostDislikedString" th:text="${stats.mostDisliked}"></p>  <!-- TODO thymeleaf -->
             <p>
                 <i id="mostDislikedUpvotes" class="far fa-thumbs-up fa-2x upicon">13</i> <!-- TODO thymeleaf -->
