@@ -1,6 +1,7 @@
 package be.uantwerpen.clubiot.Controller;
 
 import be.uantwerpen.clubiot.Model.Music;
+import be.uantwerpen.clubiot.Model.SongResult;
 import be.uantwerpen.clubiot.Model.Stats;
 import be.uantwerpen.clubiot.Service.DatabaseService;
 import be.uantwerpen.clubiot.Service.HadoopService;
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,26 +23,52 @@ public class DashboardController {
 
     @Autowired
     private DatabaseService databaseService;
+
     private HadoopService hadoopService;
     private NoSQLService noSqlService;
 
+    @Autowired
+    NoSQLService noSQLService;
+
     @RequestMapping(value={"/dashboard"}, method= RequestMethod.GET)
     public String showDashboard(ModelMap model){
-
-        hadoopService = new HadoopService();
-
-        // TODO
-        // [ ] use NOSQL service to request 'old data' ( MostLiked, BestVoter, ...)
-        // [ ] *store data in "data" object
+        // [ ] use NOSQL service to request 'old data' ( MostLiked, BestVoter, ...) => returns song id
+        // [ ] *store stats in "stats" object
         // [ ] use data object as model to pass to dashboard template (inserted in html using thymeleaf)
         // [ ] return dashboard.html
 
+        databaseService = new DatabaseService();
 
+        // get most/least popular songs
+        long mostPopularId = noSQLService.getMostPopular();
+        long leastPopularId = noSQLService.getLeastPopular();
+
+        // get vote numbers
+        int mostPopularVotes = noSQLService.getSongVotes(mostPopularId);
+        int leastPopularVotes = noSQLService.getSongVotes(mostPopularId);
+
+        // get fields of most/least popular songs
+        Music mostLikedSong = databaseService.findSongById((int)mostPopularId);
+        Music leastLikedSong = databaseService.findSongById((int)leastPopularId);
+
+        // combine fields/votes into Songresult objects (combined votecount instead of separate up/down)
+        SongResult mostLikedResult = new SongResult(mostPopularId, mostPopularVotes, mostPopularVotes);
+        mostLikedResult.setArtist(mostLikedSong.getArtist());
+        mostLikedResult.setYear(mostLikedSong.getYear());
+        mostLikedResult.setTitle(mostLikedSong.getTitle());
+
+        SongResult leastLikedResult = new SongResult(leastPopularId, leastPopularVotes, leastPopularVotes);
+        leastLikedResult.setArtist(leastLikedSong.getArtist());
+        leastLikedResult.setYear(leastLikedSong.getYear());
+        leastLikedResult.setTitle(leastLikedSong.getTitle());
+
+        // fill stats object
         Stats stats = new Stats();
-        stats.setBestVoter("Stijn");
-        stats.setMostDisliked("mostDisliked");
-        stats.setMostLiked("mostLiked");
+        stats.setBestVoter("Thomas");
+        stats.setMostLiked(mostLikedResult);
+        stats.setMostDisliked(leastLikedResult);
 
+        // pass stats as an atrribute of dashboard
         model.addAttribute("stats", stats);
         return "dashboard";
     }
@@ -128,6 +156,14 @@ public class DashboardController {
         data.put("bestVoter",bestVoterObject);
         return data;
     }
+
+
+    /// END END END ///
+
+
+
+
+
 
 //    @RequestMapping(value="/api/songs/{id}", method= RequestMethod.GET)
 //    public String playSong(@PathVariable int id){
