@@ -262,14 +262,12 @@
 
 
         function mockdata(){
-
-                myChart.data.labels[0] = 0;
-                myChart.data.datasets[0].data[0] = getRandomInt(15);
-
+            myChart.data.labels = [0,1,2,3,4,5,6,7,8,9];
+            myChart.data.datasets[0].data[0] = [r(15),r(15),r(15),r(15),r(15),r(15),r(15),r(15),r(15),r(15)];
             myChart.data.datasets[0].label = "Mock Data";
         }
 
-        function getRandomInt(max) {
+        function r(max) {
             return Math.floor(Math.random() * Math.floor(max));
         }
 
