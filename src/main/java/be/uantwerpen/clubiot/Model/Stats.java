@@ -4,18 +4,18 @@ public class Stats
 {
     private SongResult  mostLiked; // TODO make this an object : {id - name - etc}
     private SongResult  mostDisliked;
-    private String bestVoter;
+    private Voter bestVoter;
     private String welcome;
 
     public Stats()
     {
         this.mostLiked = new SongResult();
         this.mostDisliked = new SongResult();
-        this.bestVoter = "Default user";
+        this.bestVoter = new Voter("Thomas", 9);
         this.welcome = "Welcome Ignis";
     }
 
-    public Stats (SongResult mostLiked, SongResult mostDisliked, String bestVoter, String welcome)
+    public Stats (SongResult mostLiked, SongResult mostDisliked, Voter bestVoter, String welcome)
     {
         this.mostLiked = mostLiked;
         this.mostDisliked = mostDisliked;
@@ -31,7 +31,7 @@ public class Stats
         return mostDisliked;
     }
 
-    public String getBestVoter() {
+    public Voter getBestVoter() {
         return bestVoter;
     }
 
@@ -43,7 +43,7 @@ public class Stats
         this.mostDisliked = mostDisliked;
     }
 
-    public void setBestVoter(String bestVoter) {
+    public void setBestVoter(Voter bestVoter) {
         this.bestVoter = bestVoter;
     }
 }

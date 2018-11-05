@@ -31,24 +31,24 @@
     <div class="center">
         <div class="col-md-10"><button class="btn btn-outline-secondary btn-block" id="refreshBtn">Refresh</button></div>
         <div class="col-md-4 tile" id="mostpopularTile">
-            <p><b>Most popular song</b> [<small id="mostPopularId">1</small>]</p> <!-- TODO ID placement -->
-            <p id="mostPopularString" th:text="${stats.mostLiked}"></p> <!-- TODO thymeleaf -->
+            <p><b>Most popular song</b> [<small id="mostPopularId" th:text="${stats.mostLiked.songId}">0</small>]</p>
+            <p id="mostPopularString" th:text="${stats.mostLiked.title} + ' - ' + ${stats.mostDisliked.artist}"></p>
             <p>
-                <i id="mostPopularVotes" class="far fa-thumbs-up fa-2x icon">188</i> <!-- TODO thymeleaf -->
+                <i id="mostPopularVotes" th:text="${stats.mostLiked.upvotes}" class="far fa-thumbs-up fa-2x icon">0</i>
             </p>
         </div>
         <div class="col-md-4 tile" id="mostdislikedTile">
-            <p><b>Most disliked song </b> [<small id="mostDislikedId">2</small>]</p> <!-- TODO ID placement -->
-            <p id="mostDislikedString" th:text="${stats.mostDisliked}"></p>  <!-- TODO thymeleaf -->
+            <p><b>Most disliked song </b> [<small id="mostDislikedId" th:text="${stats.mostDisliked.songId}">0</small>]</p>
+            <p id="mostDislikedString" th:text="${stats.mostDisliked.title} + ' - ' + ${stats.mostDisliked.artist}"></p>
             <p>
-                <i id="mostDislikedVotes" class="far fa-thumbs-down fa-2x icon">-139</i> <!-- TODO thymeleaf -->
+                <i id="mostDislikedVotes" th:text="${stats.mostDisliked.upvotes}" class="far fa-thumbs-up fa-2x icon">0</i>
             </p>
         </div>
         <div class="col-md-2 tile" id="bestvoterTile">
             <p><b>Best voter</b></p>
-            <i id="bestVoterName" class="fas fa-user" th:text="${stats.bestVoter}"></i> <!-- TODO thymeleaf -->
+            <i id="bestVoterName" class="fas fa-user" th:text="${stats.bestVoter.name}"></i> <!-- TODO thymeleaf -->
             <div class="center">
-                <h3 id="bestVoterCount">139</h3> <!-- TODO thymeleaf -->
+                <h3 id="bestVoterCount" th:text="${stats.bestVoter.count}">0</h3> <!-- TODO thymeleaf -->
             </div>
         </div>
     </div>
@@ -207,9 +207,6 @@
             }); // end of ajax call
         }
 
-
-        /* --- NO AJAX CALLS AFTER THIS COMMENT --- */
-
         //init chart
         var ctx = document.getElementById("myChart").getContext('2d');
         var myChart = new Chart(ctx, {
@@ -263,10 +260,9 @@
 
         function mockdata(){
             myChart.data.labels = [0,1,2,3,4,5,6,7,8,9];
-            myChart.data.datasets[0].data[0] = [r(15),r(15),r(15),r(15),r(15),r(15),r(15),r(15),r(15),r(15)];
+            myChart.data.datasets[0].data = [r(15),r(15),r(15),r(15),r(15),r(15),r(15),r(15),r(15),r(15)];
             myChart.data.datasets[0].label = "Mock Data";
         }
-
         function r(max) {
             return Math.floor(Math.random() * Math.floor(max));
         }

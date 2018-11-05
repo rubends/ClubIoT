@@ -3,6 +3,7 @@ package be.uantwerpen.clubiot.Controller;
 import be.uantwerpen.clubiot.Model.Music;
 import be.uantwerpen.clubiot.Model.SongResult;
 import be.uantwerpen.clubiot.Model.Stats;
+import be.uantwerpen.clubiot.Model.Voter;
 import be.uantwerpen.clubiot.Service.DatabaseService;
 import be.uantwerpen.clubiot.Service.HadoopService;
 import be.uantwerpen.clubiot.Service.NoSQLService;
@@ -37,7 +38,6 @@ public class DashboardController {
         // [ ] use data object as model to pass to dashboard template (inserted in html using thymeleaf)
         // [ ] return dashboard.html
 
-        databaseService = new DatabaseService();
 
         // get most/least popular songs
         long mostPopularId = noSQLService.getMostPopular();
@@ -64,7 +64,7 @@ public class DashboardController {
 
         // fill stats object
         Stats stats = new Stats();
-        stats.setBestVoter("Thomas");
+        stats.setBestVoter(new Voter("Thomas", 137));
         stats.setMostLiked(mostLikedResult);
         stats.setMostDisliked(leastLikedResult);
 
