@@ -76,6 +76,7 @@ public class BrokerService implements MqttCallback {
     public void publishString(String topic, String message){
         if(isConnected()){
             MqttMessage msg = new MqttMessage();
+            msg.setRetained(true); // send to new subscribers
             msg.setPayload(message.getBytes());
             try {
                 client.publish(topic, msg);

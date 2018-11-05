@@ -1,28 +1,19 @@
 //This script gets the name of the song we pressed on
 (function($) {
 
-    var table = document.getElementById("table");
-    if (table != null) {
-        for (var i = 2; i < table.rows.length; i++) {
-            for (var j = 0; j < table.rows[i].cells.length; j++)
-                table.rows[i].cells[j].onclick = function () {
-                    //TODO needs to send the ID of the song to /api/play/{id}
-                    //$.post("/api/play/",this.id);
-                    //alert(this.innerHTML);
-                    //alert("value of selected cell: " + this.innerHTML)
-
-                    var urlString = "/api/play/" + this.innerHTML;
-                    $.ajax({
-                        url: urlString,
-                        dataType: 'text',
-                        type: 'post'
-                    });
-                };
-        }
-    }
-
-//TODO Can be changed to a call to play the song
-
+    $(".songid").click(function() {
+        var urlString = "/api/play/" + $(this).attr('id');
+        console.log("click");
+        $.ajax({
+            url: urlString,
+            dataType: 'text',
+            type: 'post'
+        }).done(function(data) {
+            var song = $.parseJSON(data)
+            console.log(song);
+            $(".song").text(song['artist'] + " - " + song['title']);
+        });
+    });
 
     function search() {
         //This method gets called when user enters search
