@@ -170,7 +170,7 @@ public class NoSQLService
         {
             DBObject object =  voteCacheIt.next();
 
-            long songId = Long.parseLong((String)object.get("_id "));
+            long songId = Long.parseLong((String)object.get("_id"));
             int vote = (int)object.get("value");
 
             if (votes.containsKey(songId))
