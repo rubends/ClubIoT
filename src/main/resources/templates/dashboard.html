@@ -29,21 +29,19 @@
 <body>
 <div class="col-md-12" id="statsDiv">
     <div class="center">
-        <div class="col-md-10"><button id="refreshBtn">Refresh</button></div>
+        <div class="col-md-10"><button class="btn btn-outline-secondary btn-block" id="refreshBtn">Refresh</button></div>
         <div class="col-md-4 tile" id="mostpopularTile">
             <p><b>Most popular song</b> [<small id="mostPopularId">1</small>]</p> <!-- TODO ID placement -->
             <p id="mostPopularString" th:text="${stats.mostLiked.title}"></p> <!-- TODO thymeleaf -->
             <p>
-                <i id="mostPopularUpvotes" class="far fa-thumbs-up fa-2x upicon">188</i> <!-- TODO thymeleaf -->
-                <i id="mostPopularDownvotes" class="far fa-thumbs-down fa-2x downicon">22</i> <!-- TODO thymeleaf -->
+                <i id="mostPopularVotes" class="far fa-thumbs-up fa-2x icon">188</i> <!-- TODO thymeleaf -->
             </p>
         </div>
         <div class="col-md-4 tile" id="mostdislikedTile">
             <p><b>Most disliked song </b> [<small id="mostDislikedId.title">2</small>]</p> <!-- TODO ID placement -->
             <p id="mostDislikedString" th:text="${stats.mostDisliked}"></p>  <!-- TODO thymeleaf -->
             <p>
-                <i id="mostDislikedUpvotes" class="far fa-thumbs-up fa-2x upicon">13</i> <!-- TODO thymeleaf -->
-                <i id="mostDislikedDownvotes" class="far fa-thumbs-down fa-2x downicon">139</i> <!-- TODO thymeleaf -->
+                <i id="mostDislikedVotes" class="far fa-thumbs-down fa-2x icon">-139</i> <!-- TODO thymeleaf -->
             </p>
         </div>
         <div class="col-md-2 tile" id="bestvoterTile">
@@ -101,9 +99,9 @@
 
         //REFRESH API
         var refreshURL = "/api/refresh";
-        //JSON objects: data: [mostPopular {id, title, artist, year, upvotes, downvotes},
-        //              mostDisliked {id, title, artist, year, upvotes, downvotes},
-        //              bestVoter {name, votesCount}]
+        //JSON objects: data: [ mostPopular {id, title, artist, year, votes},
+        //                      mostDisliked {id, title, artist, year, votes},
+        //                      bestVoter {name, votesCount}]
 
 
         //Create and fill table
@@ -125,16 +123,21 @@
 
 
         $("#refreshBtn").on('click', function(){
-            loadingTiles(true);
+            loadingTiles(true); //Disable second ajax call
             $.ajax({
                 type: 'GET',
                 url: refreshURL,
                 success: function(json){
-                    loadingTiles(false);
                     updateMostPopularTile(json.data.mostPopular);
                     updateMostDislikedTile(json.data.mostDisliked);
                     updateVoterTile(json.data.bestVoter);
-                } // end of success
+                },
+                error: function () {
+                    alert("Error getting json.");
+                },
+                complete: function () {
+                    loadingTiles(false); //Enable the clicked button
+                }
             }); // end of ajax call
 
         });
@@ -147,16 +150,14 @@
             var songString = data.title + " - " + data.artist + " (" + data.year + ")";
             $("#mostPopularId").text(data.id);
             $("#mostPopularString").text(songString);
-            $("#mostPopularUpvotes").text(data.upvotes);
-            $("#mostPopularDownvotes").text(data.downvotes);
+            $("#mostPopularVotes").text(data.votes);
         }
 
         function updateMostDislikedTile(data){
             var songString = data.title + " - " + data.artist + " (" + data.year + ")";
             $("#mostDislikedId").text(data.id);
             $("#mostDislikedString").text(songString);
-            $("#mostDislikedUpvotes").text(data.upvotes);
-            $("#mostDislikedDownvotes").text(data.downvotes);
+            $("#mostDislikedVotes").text(data.votes);
         }
 
         function updateVoterTile(data){
@@ -180,7 +181,7 @@
 
         //Adds function to the button in the table
         $('#myTable tbody').on('click','i', function(){
-            var tData = table.row($(this).parents('tr')).data();//Edit in case of JSON CHANGES
+            var tData = table.row($(this).parents('tr')).data();
             var label = tData.title + ' - ' + tData.artist + ' ('+ tData.year +')';
             var url = votesURL + "/" + tData.id + ".json";
             updateChart(url, label);
@@ -193,11 +194,16 @@
                 type: 'GET',
                 url: url,
                 success: function(json){
-                    myChart.data.labels = json.data.seconds;                   //Edit in case of JSON CHANGES
-                    myChart.data.datasets[0].data = json.data.amountOfVotes;   //Edit in case of JSON CHANGES
+                    myChart.data.labels = json.data.seconds;
+                    myChart.data.datasets[0].data = json.data.amountOfVotes;
                     myChart.data.datasets[0].label = label;
+                },
+                error: function(){
+                    mockdata(); //testingphase done --> show real error
+                },
+                complete: function(){
                     myChart.update();
-                } // end of success
+                }
             }); // end of ajax call
         }
 
@@ -250,6 +256,20 @@
         var h3 = $("#bestvoterTile").height();
         var newHeight = Math.max(h1,h2,h3);
         $("#mostpopularTile, #mostdislikedTile, #bestvoterTile").css("height", newHeight + "px");
+
+        //console.log($("#mostPopularVotes").text);
+        //$("#mostPopularVotes").addClass(($("#mostPopularVotes").text) > 0 ? "fa-thumbs-up" : "fa-thumbs-down");
+
+
+        function mockdata(){
+            myChart.data.labels = [0,1,2,3,4,5,6,7,8,9];
+            myChart.data.datasets[0].data[0] = [r(15),r(15),r(15),r(15),r(15),r(15),r(15),r(15),r(15),r(15)];
+            myChart.data.datasets[0].label = "Mock Data";
+        }
+
+        function r(max) {
+            return Math.floor(Math.random() * Math.floor(max));
+        }
 
     }); // end of onready document
 </script>

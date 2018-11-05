@@ -20,11 +20,8 @@ body{
     width: 50%;
 }
 
-.upicon{
+.icon{
   color: rgb(140, 140, 140);
   padding-right: 12px;
 }
 
-.downicon{
-  color: rgb(191, 191, 191);
-}

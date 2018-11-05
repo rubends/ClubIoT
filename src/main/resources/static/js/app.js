@@ -1,8 +1,11 @@
 //This script gets the name of the song we pressed on
 (function($) {
 
-    $(".songid").click(function() {
-        var urlString = "/api/play/" + $(this).attr('id');
+    //$(".songList").on("click", ".songid", function() {
+
+
+    function playSong(){
+        var urlString = "api/play/" + $(this).attr('id');
         console.log("click");
         $.ajax({
             url: urlString,
@@ -13,57 +16,75 @@
             console.log(song);
             $(".song").text(song['artist'] + " - " + song['title']);
         });
-    });
+    }
 
-    function search() {
+    $(".songid").click(playSong);
+
+    search = function() {
         //This method gets called when user enters search
-        var song = document.getElementById("song");
-        var artist = document.getElementById("artist");
-        var year = document.getElementById("year");
+        //var song = document.getElementById("song");
+        //var artist = document.getElementById("artist");
 
         //TODO send query to database
-        //TODO for each entery append list
-        deleteList();
-        fillList(song, artist, year);
-    }
+        //TODO for each entry append list
+        var searchString = "";
 
-    function deleteList() {
-        //This method deletes all entries from table
-        var table = document.getElementById("table");
-        for (i = table.rows.length - 1; i > 1; i--) {
-            table.deleteRow(i);
+        if(!($("#song").val()=="" || $("#song").val()==undefined )){
+            // "Song" searchbar is not empty
+
+            searchString = document.getElementById("song").value;
+        }else if(!($("#artist").val()=="" || $("#artist").val()==undefined)){
+            // "artist" searchbar is not empty
+
+            searchString = document.getElementById("artist").value;
+        }else{
+            // "Song" or "artist" searchbar was empty
+            $("#table").empty();
+            $("#table").append("Not correctly searching");
         }
-    }
 
-    function fillList(song, artist, year) {
-        //This method adds entries to table
+        console.log("Search Text: ",searchString);
+        if(searchString != "")
+        {
+            $.ajax({
+                type: "get",
+                url: "api/search",
+                data: {"song": searchString},
+                dataType: "text",
+                success: function (data) {
+                    //var searchList = $.parseJSON(data);
+                    // Check if response data is not empty
+                    var song = $.parseJSON(data);
+                    console.log(song);
 
+                    //console.log("Song 1",song.data[1].artist);
+                    if (data)
+                    {
+                        // Empty table
+                        $("#table").empty();
 
-        var table = document.getElementById("table");
+                        // Add all the objects from the jsonarray to the table
+                        var tr;
+                        tr = $('<tr/>');
+                        tr.append("<td> <a href='.'><button>Clear search</button></a></td>");
+                        $("table").append(tr);
+                        for(var i=0;i<song.data.length;i++)
+                        {
+                            tr = $('<tr/>');
+                            tr.append("<td>" + song.data[i].title + "</td>");
+                            tr.append("<td>" + song.data[i].artist + "</td>");
+                            tr.append("<td>" + song.data[i].year + "</td>");
+                            //tr.append("<td>" + song.data[i].id + "</td>");
+                            tr.append("<td class=\"songid\" id=" + song.data[i].id + "\>" +  "play" + "</td>");
 
-        for (i = 0; i < table.rows.length; i++) {
-            // Create a new row
-            var newRow = table.insertRow(table.length);
-            for (var j = 0; j < 3; j++) {
-                // Create a new cell
-                var cell = newRow.insertCell(j);
-
-                //if(document.getElementById("song").value.contains(song)) // TODO is a test can be removed
-                //{
-
-                //}
-
-                var test = 0;
-                var musicList = document.getElementById("music");
-                for (song in musicList) {
-                    // add value to the cell
-                    if (test == 0) {
-                        cell.innerHTML = song.title;
-                        test = 1;
+                            $("table").append(tr); // TODO Fix this
+                            $(".songid").click(playSong);
+                        }
                     }
                 }
+            });
 
-            }
         }
     }
+
 })(jQuery);
