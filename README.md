@@ -28,6 +28,23 @@ URL
 ```
 /dashboard
 ```
+> Laad data uit database van alle, met populairste en minst populaire, liedjes & beste voter
+
+API Calls:
+
+    /api/songs
+
+> Laat alle liedjes zien uit de MySQL database
+
+    /api/votes/{id}
+    
+> Laat liedje zien met aantal votes per seconde (Nog niet volledig af)
+
+
+    /api/refresh
+    
+> Laat de recent verwerkte data over meest populaire en minst populaire lied & beste voter zien
+
 Frontend: Stijn Dirickx
 
 Backend: Vadim Gouskov
